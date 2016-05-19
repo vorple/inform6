@@ -1,0 +1,65 @@
+
+Constant Story "Letters from a Madman^";
+
+                          Include "vorple.h";
+Include "parser";
+Include "verblib";
+                          Include "vorple-screen-effects.h";
+Include "grammar";
+
+
+[ Initialise ;
+	location = frontlawn;
+	VorpleInitialise();
+];
+
+Object frontlawn "Front lawn"
+	with description "Read the letter in the mailbox!",
+has light;
+	
+Object mailbox "mailbox" frontlawn
+	with name 'mail' 'box' 'mailbox',
+has openable scenery container;
+
+Object letter "letter" mailbox
+	with name 'letter',
+	before [; Examine: ReadLetter(); rtrue; ];
+	
+	
+[ ReadLetter ;
+	VorpleStyle(STYLE_CURSIVE);
+	VorpleStyle(STYLE_XXLARGE);
+	print "Dear ";
+	VorpleColorLetters(RED); ! VorpleStyle(STYLE_RED_LETTERS) also works
+	print "recipient";
+	VorpleColorLetters(DEFAULT_STYLE); ! or VorpleColorLetters()
+	print ".^";
+	VorpleEndStyle(); VorpleEndStyle();
+	
+	VorpleStyle(STYLE_STRIKETHROUGH); print "Why"; VorpleEndStyle();
+	print " I ";
+	VorpleStyle(STYLE_EMPHASIS); print "know"; VorpleEndStyle();
+	print ". ";
+	
+	VorpleStyle(STYLE_STRONG); print"I have not forgotten. "; VorpleEndStyle();
+	
+	VorpleStyle(STYLE_MONOSPACE); print "He is not "; VorpleStyle(STYLE_UNDERLINE); print "the one"; VorpleEndStyle(); print ". "; VorpleEndStyle();
+	
+	print "There are "; VorpleStyle(STYLE_NOWRAP); print "10 000 000 000"; VorpleEndStyle(); print " beetles in my head.^^";
+	
+	VorpleRightAlign("The end is nigh."); print "^";
+	
+	VorpleStyle(STYLE_FANTASY); VorpleStyle(STYLE_XLARGE); print "We are ";
+	VorpleColorLettersBackground(YELLOW); print "alone"; VorpleColorLettersBackground();
+	VorpleEndStyle(); VorpleEndStyle();
+	print "^^";
+	
+	print "He comes. ";
+	VorpleStyle(STYLE_SMALL); print "He comes."; VorpleEndStyle();
+	print " "; VorpleStyle(STYLE_XSMALL); print "He comes."; VorpleEndStyle();
+	print " "; VorpleStyle(STYLE_XXSMALL); print "He comes."; VorpleEndStyle();
+	print "^";
+	
+	VorpleStyle(STYLE_TRANSIENT); print "^"; print "This is a "; VorpleStyle(STYLE_XLARGE); print "secret."; VorpleEndStyle(); VorpleEndStyle();
+	"";
+];

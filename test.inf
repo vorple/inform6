@@ -1,0 +1,29 @@
+
+Constant Story "Test^";
+
+                          Include "vorple.h";
+Include "parser";
+Include "verblib";
+                          Include "vorple.h";
+Include "grammar";
+
+
+[ Initialise ;
+	location = treasury;
+	VorpleInitialise();
+];
+
+[ w8 	abuf atab ;
+!	@read_char 1 -> abuf;	! VM_KeyChar, itself called in KeyPause, which is the translation of KeyCharPrimitive
+	read abuf atab;		! This works...
+];
+
+Object treasury "Treasury"
+	with description "take",
+has light;
+
+Object gem "gem" treasury
+	with name 'gem',
+	description [; print "The gem is..."; w8(); " black."; ],
+	before [; Take: deadflag=2; rtrue;
+	];

@@ -1,0 +1,103 @@
+Constant Story "Monty Hall^";
+
+                       Include "vorple.h";
+Include "parser";
+                       
+Global door_chosen = -1;
+
+[ DeathMessage 		i ;
+	if (deadflag == 3) {
+		VorpleStyle("prize");
+		print "You win a ";
+		switch(door_chosen) {
+			0: i = doorA;
+			1: i = doorB;
+			2: i = doorC;
+		}
+		print (name) child(i);
+		print "!";
+		VorpleEndStyle();
+		return true;
+	}
+];
+Include "verblib";
+                       Include "vorple-screen-effects.h";
+Include "grammar";
+
+[ Initialise ;
+	location = deal;
+	VorpleInitialise();
+	move car to random(doorA, doorB, doorC);
+	if (car in doorA) { move goat1 to doorB; move goat2 to doorC;}
+	if (car in doorB) { move goat1 to doorA; move goat2 to doorC;}
+	if (car in doorC) { move goat1 to doorA; move goat2 to doorB;}
+];
+
+! This example requires you to add
+!    <link rel="stylesheet" href="resources/css/montyhall.css">
+! to play.html (the css file is available on the Vorple webpage)
+
+
+
+Object deal
+	with short_name [;
+			if (isVorpleSupported()) {
+				! remove the usual formatting
+    				#Ifdef TARGET_ZCODE;
+    				style roman;
+    				#Ifnot; ! TARGET_GLULX;
+    				glk($0086, 0); ! set normal style
+    				#Endif; ! TARGET_
+				VorpleStyle("room-header");
+				print "Let's Make a Deal";
+				VorpleEndStyle();
+			} return true;
+		],
+	description [; print ""; ],
+has light;
+
+Class Gamedoor
+	with name 'door',
+	before [i j ; Open: if (doorA hasnt open && doorB hasnt open && doorC hasnt open) {
+				! choose a door with a goat
+				i = random(doorA, doorB, doorC);
+				while (i == self || child(i) == car) { i = random(doorA, doorB, doorC); }
+				! the third door
+				j = random(doorA, doorB, doorC);				
+				while (j == self || j == i) { j = random(doorA, doorB, doorC); }
+				print "~But wait!~ the host says. 'You still have a chance to change your mind. Let's open ";
+				print (name) i;
+				print " which reveals a goat.^^";
+				print "You can still open ", (name) self, ", or you can switch and open ", (name) j, " instead. Which will you choose?";
+				give i open;
+			} else {
+				! your choice
+				print "Congratulations!"; door_chosen = self.number;
+				deadflag=3;
+			}
+			return true;
+	],
+has container proper;
+
+Gamedoor doorA "door A" deal
+	with name 'A//',
+	number 0,
+has ;
+Gamedoor doorB "door B" deal
+	with name 'B//',
+	number 1,
+has ;
+Gamedoor doorC "door C" deal
+	with name 'C//',
+	number 2,
+has ;
+
+Object goat1 "goat"
+	with name 'goat',
+has ;
+Object goat2 "goat"
+	with name 'goat',
+has ;
+Object car "car"
+	with name 'car',
+has ;

@@ -1,0 +1,51 @@
+
+Constant Story "Click to Retry^";
+
+                          Include "vorple.h";
+Include "parser";
+
+Object LibraryMessages
+	with before [;
+		Miscellany: if (lm_n == 5) { print ""; NewEndPrompt(); rtrue; } ! replace the final message
+	];
+
+Include "verblib";
+                          Include "vorple-hyperlinks.h";
+Include "grammar";
+
+
+[ Initialise ;
+	location = treasury;
+	VorpleInitialise();
+];
+
+Object treasury "Treasury"
+	with description "Take the gem.",
+has light;
+
+Object gem "gem" treasury
+	with name 'gem',
+	before [; Take: deadflag=2; rtrue;
+	];
+
+
+
+
+[ NewEndPrompt ;
+	print "^Would you like to ";
+	VorpleLinkCommand("RESTART");
+	print ", ";
+	VorpleLinkCommand("RESTORE");	print " a saved game";
+	#Ifdef DEATH_MENTION_UNDO;
+	print ", ";
+	VorpleLinkCommand("UNDO");
+	print " your last move";
+	#Endif;
+	if (TASKS_PROVIDED == 0) {
+		print ", give the "; VorpleLinkCommand("FULL"); print " score for that game";
+	}
+	if (deadflag == 2 && AMUSING_PROVIDED == 0) {
+		print ", see some suggestions for "; VorpleLinkCommand("AMUSING"); print " things to do";
+	}
+        print " or "; VorpleLinkCommand("QUIT"); "?";
+];

@@ -1,0 +1,88 @@
+Constant Story "Scrambled Eggs^";
+
+                       Include "vorple.h";
+Include "parser";
+
+[ DeathMessage ;
+	if (deadflag==3) { print "You found the pan!"; }
+];
+
+Include "verblib";
+                       Include "vorple.h";
+Include "grammar";
+
+[ Initialise ;
+	location = kitchen;
+	VorpleInitialise();
+];
+
+
+Object kitchen "Kitchen"
+	with description [; print "Your task is to find a frying pan!"; if (turns == 0) { print "^^(Type HINTS to get help.)"; } "";
+	],
+has light;
+
+Object table "table" kitchen
+	with name 'table',
+	describe [; print "^You can see a table here.^"; rtrue; ], ! to hide the frying pan
+has static supporter;
+
+Object fryingpan "frying pan" table
+	with name 'frying' 'pan',
+	after [; Take: deadflag=3; ],
+has ;
+
+
+[ GiveHint i;
+	switch(i) {
+		0: return "The table is relevant.";
+		1: return "Have you looked on the table?";
+		2: return "The pan is on the table.";
+	}
+];
+
+Global number_of_hints = 3;
+Array hints_revealed --> 0 0 0;
+
+Array h buffer 1000;
+
+[ HintSub 	 i j st;
+	!VorpleTypeOfTurn("normal");
+	for (i=0: i< number_of_hints: i++) {
+		print (PrintStringOrArray) IntToString(i+1), ") ";
+		if ( hints_revealed-->i == 1) { print (PrintStringOrArray) GiveHint(i); }
+		else {
+			st = GiveHint(i);
+			!print (PrintStringOrArray) st;
+			st.print_to_array(h, 1000);
+			for (j=0: j<h-->0: j++) {
+				if (h->(WORDSIZE+j) ~= ' ') { h->(WORDSIZE+j) = random(26)-1+'a'; }
+			}
+			VorplePlaceElement(0, BuildCommand("hint-", IntToString(i) ), h);
+		}
+		print "^";
+	}
+	"^(Type REVEAL # where # is the number of the hint you want to unscramble.)";
+];
+
+Verb meta 'hint' 'hints'
+*		->Hint;
+
+[ RevealSub 		i;
+	if (noun < 1 || noun > number_of_hints) {
+		print "Please choose a number between 1 and ", number_of_hints, ".";
+		return true;
+	} else {
+		i = noun-1;
+		hints_revealed-->i = 1;
+		if (isVorpleSupported()){
+			VorplePutContentInElement( BuildCommand("hint-", IntToString(i) ), GiveHint(i));
+		} else {
+			print (string) GiveHint(i);
+			"";
+		}
+	}
+];
+
+Verb meta 'reveal'
+* number	->Reveal;

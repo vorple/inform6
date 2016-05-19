@@ -1,0 +1,64 @@
+
+Constant Story "How To II^";
+
+                          Include "vorple.h";
+Include "parser";
+
+Global VorpleParserError = 0;		! do we need a tooltip on the prompt
+
+! Vorple needs ParserError, which is a stub in Grammar, but gives you the stub MyParserError
+! You need to define the function before the second inclusion of vorple
+[ MyParserError ;
+	VorpleParserError = 1;
+	return 0;  ! needed for the error processing to continue
+];
+
+Global beforefirstcommand = 1;
+! AfterPrompt is a I6 lib that gets called right after the prompt is displayed; put your
+!    prompt tooltips there!
+[ AfterPrompt ;
+	if (beforefirstcommand) { beforefirstcommand = 0; VorpleTooltipPrompt("Type a command to play."); }
+	if (VorpleParserError == 1) {
+		VorpleTooltipPrompt("Try to for example EXAMINE things you see or take INVENTORY.");
+		VorpleParserError=0;
+	}
+];
+
+Include "verblib";
+                          Include "vorple-tooltips.h";
+Include "grammar";
+
+
+[ Initialise ;
+	location = bedroom;
+	VorpleInitialise();
+];
+
+
+Object bedroom "Bedroom"
+	with description [; "This is a bedroom"; ! should the tip on the prompt come here?
+		],
+	before [; Examine: if (self hasnt open) {
+				print "The wardrobe is ";
+				VorplePlaceElement(0, "wardrobe-closed", "closed");
+				print ".";
+				VorpleTooltipElement("You can OPEN WARDROBE to see what's inside.", "wardrobe-closed", 20); ! 2 seconds
+				""; } else {<<Examine self>>;}
+			return true;
+		],
+has light ;
+
+Object wardrobe "wardrobe" bedroom
+	with name 'wardrobe',
+has static openable container;
+
+Object jacket wardrobe
+	with name 'jacket',
+	short_name [; if (self in wardrobe) {
+				VorplePlaceElement(0, "jacket-text", "jacket");
+				VorpleTooltipElement("The jacket is something you can TAKE or WEAR.", "jacket-text", 20); ! 2 seconds
+			}
+			else { print "jacket"; }
+			return true;
+	],
+has clothing ;

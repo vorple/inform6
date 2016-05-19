@@ -1,0 +1,84 @@
+Constant Story "Ibid. (2)^";
+
+                       Include "vorple.h";
+Include "parser";
+Include "verblib";
+                       Include "vorple-tooltips.h";
+Include "grammar";
+
+
+
+Global footnotes_mentioned = 0;
+Constant NUMBER_OF_FOOTNOTES = 3;
+
+Array footnotes_number --> 0 0 0;
+Array numberstring buffer 12;
+
+[ ListOfFootnotes i ;
+	switch(i) {
+		0: return "Francis Drake ate here, if the sign on the door is to be believed";
+		1: return "This is unlikely, considering that owls are protected animals in England these days";
+		2: return "This young man is a young Gary Cooper.";
+		default: return "";
+	}
+];
+
+[ ShowFootnote i;
+	i = i-1;
+	if (i > NUMBER_OF_FOOTNOTES) { "Programming error: footnote assignment out of range."; }
+	else {
+		if (footnotes_number-->i == 0){
+			footnotes_mentioned++;
+			footnotes_number-->i = footnotes_mentioned;
+		}
+		@output_stream 3 numberstring;
+		print "(", (PrintStringOrArray) IntToString(footnotes_number-->i), ")";
+		@output_stream -3;
+		VorpleTooltipMouse(numberstring, ListOfFootnotes(i));
+	}
+];
+
+
+
+[ Initialise ;
+	location = inn;
+	VorpleInitialise();
+];
+
+
+
+Object inn "Ship Inn"
+	with description [; print "Here you are in a lovely pub which your guidebook assures you is extremely authentic."; ShowFootnote(1); "^^To your left sits a party of Italians, with their guidebook.^^To your right is a silent, but not unappealing, young man.";	
+	],
+has light;
+
+Object italians "a party of italians" inn
+	with name 'party' 'of' 'italians',
+has scenery;
+
+Object man "silent young man" inn
+	with name 'silent' 'young' 'man',
+	description [; print "A silent, but not unappealing, young man."; ShowFootnote(3); ""; ],
+has scenery;
+
+Object table "table" inn
+	with name 'table',
+has scenery supporter;
+
+Object pie "pie" table
+	with name 'pie',
+	description [; print "Your waitress told you it was the specialty of the day, Steak and Owl Pie."; ShowFootnote(2); ""; ],
+has edible;
+
+
+
+[ FootnoteSub ;
+	if (noun > footnotes_mentioned) { "You haven't seen any such footnote.";}
+	if (noun < 1) { "Footnotes are numbered from 1."; }
+	print "(", (PrintStringOrArray) IntToString(footnotes_number-->(noun-1)), "): ", (PrintStringOrArray) ListOfFootnotes(noun-1);
+	".";
+];
+
+Verb 'footnote'
+* number	-> Footnote;
+

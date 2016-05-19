@@ -1,0 +1,68 @@
+Constant Story "Convenience Store^";
+
+                          Include "vorple.h";
+Include "parser";
+Include "verblib";
+                          Include "vorple.h";
+Include "grammar";
+
+[ Initialise ;
+	location = store;
+	VorpleInitialise();
+];
+
+
+Object store "Convenience Store"
+	with description "Test me with ~take all/i/put all in paper bag/i~.",
+has light;
+
+Object paperbag "paper bag" store
+	with name 'paper' 'bag',
+has container open;
+
+Object eggs "eggs" store
+	with name 'eggs',
+	article "some",
+has ;
+Object milk "milk" store
+	with name 'milk',
+	article "some",
+has ;
+Object pickles "pickles" store
+	with name 'jar' 'of' 'pickles',
+	article "some",
+has ;
+Object magazine "magazine" store
+	with name 'magazine',
+has;
+Object canopener "can opener" store
+	with name 'can' 'opener',
+has;
+
+
+Array objectname buffer 300;
+
+[ HTMLInventorySub i j;
+	if (IsVorpleSupported()) {
+		L__M(##Inv, 2);     ! for 6/11 and 6/12 compatibility
+		print ":^";
+		VorpleOpenHTMLTag("ul");
+		objectloop (i in player) {
+			@output_stream 3 objectname; print (string) i.article; print " "; print (name) i; @output_stream -3;
+			VorplePlaceElement("li", "", objectname);
+			if (child(i)) {
+				VorpleOpenHTMLTag("ul");
+				objectloop(j in i) {
+					@output_stream 3 objectname; print (string) j.article; print " "; print (name) j; @output_stream -3;
+					VorplePlaceElement("li", "", objectname);
+				}
+				VorpleCloseHTMLTag();
+			}			
+		}
+		VorpleCloseHTMLTag();
+	}
+	else { <<Inv>>; }
+];
+
+Extend 'inventory' first
+*		->HTMLInventory;

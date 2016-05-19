@@ -1,0 +1,64 @@
+Constant Story "How To I^";
+
+                          Include "vorple.h";
+Include "parser";
+Include "verblib";
+                          Include "vorple-notifications.h";
+Include "grammar";
+
+[ Initialise ;
+	location = lab;
+	VorpleInitialise();
+];
+
+Object lab "Laboratory"
+	with description [; print "You're in a fancy laboratory.";
+			if (turns==0) { VorpleNotification("Type LOOK (or just L) to see the room description again.");	}
+		],
+	n_to corridor,
+has light ;
+
+Object corridor "Corridor"
+	with description "This is a corridor.",
+	s_to lab,
+has light ;
+
+Object testtube "test tube" lab
+	with name 'test' 'tube',
+has ;
+
+Object trolley "trolley" lab
+	with name 'trolley',
+	examined 0,
+	description [; print "It's just a trolley.";
+		if (self.examined == 0) {
+			self.examined = 1;
+			VorpleNotification("You can push the trolley between rooms by commanding PUSH TROLLEY followed by a compass direction");
+		}
+		"";
+	],
+has ;
+
+
+Global firstObjectTaken = 0;
+
+[ HelpfulTakeSub ;
+	<Take noun>;
+	if (firstObjectTaken == 0) {
+		firstObjectTaken = 1;
+		VorpleNotification("Type INVENTORY (or just I) to see a list of what you're carrying");
+	}
+	return true;
+];
+
+Extend 'take' first
+* noun			->HelpfulTake;
+
+
+[ HelpfulExamineSub ;
+	if (verb_word ~= 'x//') { VorpleNotification("Tip: You can abbreviate EXAMINE to just X"); }
+	<<Examine noun>>;
+];
+
+Extend only 'examine' first
+* noun			->HelpfulExamine;

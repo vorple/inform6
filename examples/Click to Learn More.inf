@@ -1,0 +1,41 @@
+
+Constant Story "Click to Learn More^";
+
+                          Include "vorple.h";
+Include "parser";
+Include "verblib";
+                          Include "vorple-hyperlinks.h";
+Include "grammar";
+
+
+[ Initialise ;
+	location = lounge;
+	VorpleInitialise();
+];
+
+Object lounge "Lounge"
+	with description [; print "This is a Lounge.";
+		if (turns == 0) {
+			print "^^(Type ";
+			VorpleLinkCommand("ABOUT");
+			print " for more information.)";
+		}
+		return true;
+	],
+has light ;
+
+[ AboutSub ;
+	print "This fine story has been made possible by ";
+	if (IsVorpleSupported()) {
+		VorpleLinkWebsiteText("http://vorple-if.com", "Vorple");
+	} else {
+		print "Vorple (vorple-if.com)";
+	}
+	print ". Please contact us at ";
+	VorpleLinkWebsiteText("mailto:if@@64example.com", "if@@64example.com");
+	print ".^";
+	VorpleTypeOfTurn("normal");		! needed, really?
+];
+
+Verb meta 'about' 'info'
+*		->About;

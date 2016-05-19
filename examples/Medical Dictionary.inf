@@ -1,0 +1,44 @@
+Constant Story "Medical Dictionary^";
+
+                    Include "vorple.h";
+Include "parser";
+Include "verblib";
+                    Include "vorple-tooltips.h";
+Include "grammar";
+
+[ Initialise ;
+	location = surgery;
+	VorpleInitialise();
+];
+
+Object surgery "Surgery"
+	with description "",
+has light;
+
+Object craniotome
+	with name 'craniotome',
+	short_name [; print ""; VorpleTooltipMouse("craniotome", self.definition); rtrue; 	],
+	found_in surgery,
+	definition "A tool for drilling holes in the skull.",
+has ;
+
+Object tracheotome
+	with name 'tracheotome',
+	short_name [; print ""; VorpleTooltipMouse("tracheotome", self.definition); rtrue; 	],
+	found_in surgery,
+	definition "A blade used to cut an hole to the trachea for a breathing tube.",
+has ;
+
+Object probang
+	with name 'probang',
+	short_name [; print ""; VorpleTooltipMouse("probang", self.definition); rtrue; 	],
+	found_in surgery,
+	definition "A sponge attached to a long flexible rod, used to clear obstacles from the throat.",
+has ;
+
+Object stitches
+	with name 'butterfly' 'stitches',
+	short_name [; print ""; VorpleTooltipMouse("butterfly stitches", self.definition); rtrue; 	],
+	found_in surgery,
+	definition "Thin adhesive strips for bandaging small wounds.",
+has pluralname ;

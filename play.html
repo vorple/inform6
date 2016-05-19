@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Vorple Play</title>
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+  <meta name="viewport" content="width=device-width, user-scalable=no">
+  <meta name="author" content="Hugo Labrande & Juhana Leinonen">
+  <link rel="stylesheet" href="style.css">
+
+  <script type="text/javascript" src="interpreter/vorple.parchment.min.js"></script>
+<script type="text/javascript">
+// The loading message can be changed by setting a global variable
+// vorpleLoaderMessage in a custom JavaScript file
+$( function() {
+$( '#vorpleLoader' ).html(
+typeof vorpleLoaderMessage === 'string' ? vorpleLoaderMessage : 'Loading...'
+);
+});
+</script>
+
+<link rel="stylesheet" href="interpreter/vorple.css">
+
+<script type="text/javascript" src="examples/resources/javascript/encyclopedia.js"></script>
+<link rel="stylesheet" href="examples/resources/css/montyhall.css">
+
+<script type="text/javascript">
+parchment.options.lib_path = 'interpreter/';
+parchment.options.default_story = [ "test.z5" ];
+parchment.options.lock_story = 1;
+
+
+vorple.media.defaults.swfPath = 'interpreter/';
+vorple.media.defaults.audioPath = 'examples/resources/audio';
+vorple.media.defaults.imagePath = 'examples/resources/image';
+vorple.media.defaults.musicPath = 'examples/resources/music';
+vorple.media.defaults.videoPath = 'examples/resources/';
+
+$( function() {
+$( '.coverimage, .links, .interpretercredit' ).detach();
+$( '#vorpleContainer' ).unwrap();
+
+vorple.core.init( parchment );
+parchment.init();
+});
+</script>
+
+ </head>
+<body class="play">
+<div class="container">
+<div class="coverimage"><span><a href="Cover.jpg"><img src="Small Cover.jpg" border="1" /></a></span></div>
+<div class="links">
+<div class="smalltitle">Vorple-6L02</div>
+<ul>
+<li><a href="index.html">Home page</a></li>
+</ul>
+</div>
+
+<div id="gameport">
+<div id="vorpleContainer">
+<div id="vorple"><div id="vorpleLoader"></div></div>
+<div id="vorpleInput"></div>
+<div id="parchment"></div>
+<div class="clearAll"></div>
+</div>
+</div>
+
+</div>
+<div class="interpretercredit"><a href="http://vorple-if.com">Vorple</a></div>
+</body>
+</html>
+

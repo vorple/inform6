@@ -1,0 +1,78 @@
+
+Constant MAX_SCORE = 5;
+
+Constant Story "Score Notifications^";
+
+
+Replace NotifyTheScore;
+
+                          Include "vorple.h";
+Include "parser";
+
+
+Array mystr buffer 100; ! to get the message
+
+[ NotifyTheScore 	x1;
+	! this is a bit particular because the score notifications in the I6 library
+	! are very, very late (literally the last thing before the prompt)
+	! so we have to fake it in the case of the Z-machine
+	if ( IsVorpleSupported() == 0) {
+		style underline;
+		print "^[";  L__M(##Miscellany, 50, score-last_score);  print ".]^";
+		style roman;
+	} else {
+		x1 = (score - last_score);
+		@output_stream 3 mystr;
+		print "Your score has just gone ";
+		if (x1 > 0) print "up"; else { x1 = -x1; print "down"; }
+		print " by ", (number) x1, " point";
+            	if (x1 > 1) print "s";
+            	print ".";
+		@output_stream -3;
+            	! Show notification
+            	VorpleNotification(mystr, VORPLE_POSITION_TOP_CENTER);
+	}
+];
+
+Include "verblib";
+                          Include "vorple-notifications.h";
+Include "grammar";
+
+
+
+[ Initialise ;
+	location = treasurechamber;
+	VorpleInitialise();
+];
+
+Object treasurechamber "Treasure Chamber"
+	with description "Wealth beyond your dreams is piled all over this room.",
+	each_turn [; if (score == 5) { deadflag = 2; } ],
+has light;
+
+
+Class Valuable
+	with taken 0,
+	before [; Take: if (self.taken == 0) { score = score + 1; } self.taken = 1; ];
+	
+Valuable pearls "pearls" treasurechamber
+	with name 'pearls//p',
+has pluralname;
+Valuable goldcoins "gold coins" treasurechamber
+	with name 'gold' 'coins//p',
+has pluralname;
+Valuable diamonds "diamonds" treasurechamber
+	with name 'diamonds//p',
+has pluralname;
+Valuable rubies "rubies" treasurechamber
+	with name 'rubies//p',
+has pluralname;
+Valuable emeralds "emeralds" treasurechamber
+	with name 'emeralds//p',
+has pluralname;
+
+
+
+
+
+

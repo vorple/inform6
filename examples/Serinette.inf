@@ -1,0 +1,60 @@
+Constant Story "Serinette^";
+
+                       Include "vorple.h";
+Include "parser";
+Include "verblib";
+                       Include "vorple-multimedia.h";
+Include "grammar";
+
+! WARNING: to use this, you must point "play.html" to the right folders
+!   (by default, it'll look in the same folder as the one it is in)
+!   the best way is to create a 'resources' folder in the folder where "play.html" is and then write
+!		vorple.media.defaults.audioPath = 'resources/';
+!		vorple.media.defaults.imagePath = 'resources/';
+!		vorple.media.defaults.musicPath = 'resources/';
+!		vorple.media.defaults.videoPath = 'resources/';
+!   at the right place in 'play.html'
+
+
+[ Initialise ;
+	location = drawingroom;
+	VorpleInitialise();
+	VorplePreloadImage("serinette.jpg");
+];
+
+
+Attribute wound;
+
+
+Object drawingroom "Drawing room"
+	with description "The drawing room is tastefully decorated.",
+has light;
+
+[ PlayTune ;
+	VorplePlayMusic("musicbox.mp3");
+];
+
+Object serinette "serinette" drawingroom
+	with description [; VorpleImage("serinette.jpg", IMAGE_CENTERED); "There's a winding key behind the box."; ],
+	describe "A beautiful music box sits on a table.",
+	name 'serinette' 'music' 'box',
+	before [; Wind: give self wound; VorplePlaySound("winding.mp3"); if (self has open) {PlayTune();} "You turn the winding key until it turns no more.";
+		Receive: "It's not the kind of box that can contain anything other than its own mechanism.";
+		Open: if (self has wound) {PlayTune(); } else {"Nothing happens. Looks like it must be wound first.";}
+		Close: if (self has wound) { VorpleStopMusic(); }
+		],
+has openable container transparent;
+
+Object windingkey "winding key" serinette
+	with name 'winding' 'key',
+	before [; Wind: <<Wind serinette>>;
+	];
+
+
+[ WindSub;
+	if (noun has wound) {print (The) noun, " is already wound.";}
+	else {"That's not something you can wind";}
+];
+
+Verb 'wind'
+* noun		->Wind;

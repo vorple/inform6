@@ -1,0 +1,48 @@
+Constant Story "The Sum of Human Knowledge^";
+
+                       Include "vorple.h";
+Include "parser";
+Include "verblib";
+                       Include "vorple.h";
+Include "grammar";
+
+[ Initialise ;
+	location = library;
+	VorpleInitialise();
+];
+
+! This example requires you to add
+!     <script type="text/javascript" src="resources/encyclopedia.js"></script>
+! to play.html (the script is available on the Vorple webpage)
+
+! Note: since the inform parser strips out capitalization, you won't be able to
+! look up wikipedia pages with caps (except the first one); for instance names
+! of people ("Pete Best") will not be found ("Pete best" doesn't exist).
+
+
+Object library "Library"
+	with description "The shelves are filled with volumes of an encyclopedia. You can look up any topic you want.",
+has light;
+
+Array myTopic buffer 1000;
+
+[ LookUpTopicSub 	i;
+	! build array
+	@output_stream 3 myTopic;
+	for (i=10: i<buffer->1+2: i++) { !  start at 10 because you start at 2 and you skip "look up "
+		print (char) buffer->i;
+	}
+	@output_stream -3;
+	! send it
+	if (isVorpleSupported()){
+		VorplePlaceBlockLevelElement("dictionary-entry", "");
+		VorpleExecuteJavaScriptCommand( BuildCommand("wikipedia_query('", VorpleEscape(myTopic), "')"));
+	} else {
+		print "You find the correct volume and learn about ";
+		print (PrintStringOrArray) myTopic;
+		".";
+	}
+];
+
+Extend 'look' first
+* 'up' topic	->LookUpTopic;
