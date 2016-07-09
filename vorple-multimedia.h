@@ -9,7 +9,7 @@ System_file;
 
 [ VorpleImageInElement file classes       id ;
 	id = UniqueIdentifier();
-	VorplePlaceDivElement(BuildCommand(id, " ", classes, " vorple-image"));
+	VorplePlaceDivElement(BuildCommand(id, " ", classes, " vorple-image"), "");
 	VorpleExecuteJavaScriptCommand(BuildCommand("$('.", id, "').html(vorple.media.image('", VorpleEscape(file), "'))"));
 ];
 
