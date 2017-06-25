@@ -1,3 +1,7 @@
+! How To II - More tips to new players who might not be familiar with standard IF conventions
+
+! We'll show a tooltip on the prompt to direct the player to use the keyboard, hint about what kind of commands to use if the first command they try is an error and direct their attention to parts of items.
+
 
 Constant Story "How To II^";
 
@@ -6,11 +10,10 @@ Include "parser";
 
 Global VorpleParserError = 0;		! do we need a tooltip on the prompt
 
-! Vorple needs ParserError, which is a stub in Grammar, but gives you the stub MyParserError
-! You need to define the function before the second inclusion of vorple
-[ MyParserError ;
+! a stub that is called when there is a parser error
+[ ParserError ;
 	VorpleParserError = 1;
-	return 0;  ! needed for the error processing to continue
+	return 0;  ! needed for processing to continue
 ];
 
 Global beforefirstcommand = 1;
@@ -42,7 +45,7 @@ Object bedroom "Bedroom"
 				print "The wardrobe is ";
 				VorplePlaceElement(0, "wardrobe-closed", "closed");
 				print ".";
-				VorpleTooltipElement("You can OPEN WARDROBE to see what's inside.", "wardrobe-closed", 20); ! 2 seconds
+				VorpleTooltipElement("You can OPEN WARDROBE to see what's inside.", "wardrobe-closed", 2); ! 2 seconds
 				""; } else {<<Examine self>>;}
 			return true;
 		],
@@ -56,7 +59,7 @@ Object jacket wardrobe
 	with name 'jacket',
 	short_name [; if (self in wardrobe) {
 				VorplePlaceElement(0, "jacket-text", "jacket");
-				VorpleTooltipElement("The jacket is something you can TAKE or WEAR.", "jacket-text", 20); ! 2 seconds
+				VorpleTooltipElement("The jacket is something you can TAKE or WEAR.", "jacket-text", 2); ! 2 seconds
 			}
 			else { print "jacket"; }
 			return true;

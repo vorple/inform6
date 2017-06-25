@@ -1,3 +1,6 @@
+! Letters from a Madman - Example of all different styles available in the extension.
+
+! The letter in this example story has all the styles defined in the extension, plus a couple of combinations and colors.
 
 Constant Story "Letters from a Madman^";
 
@@ -30,9 +33,9 @@ Object letter "letter" mailbox
 	VorpleStyle(STYLE_CURSIVE);
 	VorpleStyle(STYLE_XXLARGE);
 	print "Dear ";
-	VorpleColorLetters(RED); ! VorpleStyle(STYLE_RED_LETTERS) also works
+	VorpleStyle(STYLE_RED_LETTERS);
 	print "recipient";
-	VorpleColorLetters(DEFAULT_STYLE); ! or VorpleColorLetters()
+	VorpleEndStyle();
 	print ".^";
 	VorpleEndStyle(); VorpleEndStyle();
 	
@@ -50,7 +53,7 @@ Object letter "letter" mailbox
 	VorpleRightAlign("The end is nigh."); print "^";
 	
 	VorpleStyle(STYLE_FANTASY); VorpleStyle(STYLE_XLARGE); print "We are ";
-	VorpleColorLettersBackground(YELLOW); print "alone"; VorpleColorLettersBackground();
+	VorpleStyle(STYLE_YELLOW_BACKGROUND); print "alone"; VorpleEndStyle();
 	VorpleEndStyle(); VorpleEndStyle();
 	print "^^";
 	
@@ -59,7 +62,5 @@ Object letter "letter" mailbox
 	print " "; VorpleStyle(STYLE_XSMALL); print "He comes."; VorpleEndStyle();
 	print " "; VorpleStyle(STYLE_XXSMALL); print "He comes."; VorpleEndStyle();
 	print "^";
-	
-	VorpleStyle(STYLE_TRANSIENT); print "^"; print "This is a "; VorpleStyle(STYLE_XLARGE); print "secret."; VorpleEndStyle(); VorpleEndStyle();
 	"";
 ];

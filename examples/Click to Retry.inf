@@ -1,3 +1,9 @@
+! Click to Retry - Clickable options when play ends.
+
+! If the story makes use of hyperlinks, we will probably want the options presented when the play ends be clickable as well. This example replaces the rule in the Standard Rules with one that prints the options as hyperlinks.
+
+! Because we can't print the topic entry that contains the actual command, we'll assume that the word written in all caps is the correct command.
+
 
 Constant Story "Click to Retry^";
 

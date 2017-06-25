@@ -1,4 +1,8 @@
 
+! Click to Learn More - Hyperlinks to external web pages, email links and action links, with a fallback if Vorple is not available.
+
+! Email links ("mailto:") open an external mail program with the address pre-filled.
+
 Constant Story "Click to Learn More^";
 
                           Include "vorple.h";
@@ -34,7 +38,6 @@ has light ;
 	print ". Please contact us at ";
 	VorpleLinkWebsiteText("mailto:if@@64example.com", "if@@64example.com");
 	print ".^";
-	VorpleTypeOfTurn("normal");		! needed, really?
 ];
 
 Verb meta 'about' 'info'

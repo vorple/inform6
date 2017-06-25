@@ -1,0 +1,87 @@
+
+! Mood Swings - Changing the text of clicked links
+
+! A commonly used technique in modern hypertext IF is to make a linked text cycle through a set of options that changes the story state. For example, clicking on the word "happy" in the text "Alice is happy" changes the sentence to "Alice is sad" without otherwise advancing the story.
+
+! Here we do the same thing by making links in character descriptions trigger a hidden command that changes the property called appearance and then changing the link to reflect the new property. The phrase that changes the link ("display text...") is from the core Vorple extension.
+
+! Note: the current I6 code has a slight bug (the prompt gets one line lower when the command is executed silently) that will be corrected soon
+
+
+Constant Story "Mood Swings^";
+
+                          Include "vorple.h";
+Include "parser";
+Include "verblib";
+                          Include "vorple-hyperlinks.h";
+Include "grammar";
+
+
+[ Initialise ;
+	location = savoyBallroom;
+	VorpleInitialise();
+];
+
+Object savoyBallroom "Savoy Ballroom"
+    with description "",
+has light;
+
+Constant CONFIDENT = 0;
+Constant ENERGETIC = 1;
+Constant FLUSTERED = 2;
+Constant TIRED = 3;
+Constant CHEERFUL = 4;
+
+[ AppearanceName s t;
+    t = "";
+    switch(s.appearance) {
+        CONFIDENT: t= "confident";
+        ENERGETIC: t= "energetic";
+        FLUSTERED: t= "flustered";
+        TIRED: t= "tired";
+        CHEERFUL: t= "cheerful";
+    }
+    return t;
+];
+
+Array mystr buffer 100;
+
+[ PrintAppearance s    t ;
+    t = AppearanceName(s);
+    VorpleLinkDisableName(s.linkname);
+    bp_output_stream(3, mystr, 100); print "cycle appearance of "; print (The) self; bp_output_stream(-3);
+    VorpleLinkCommandText(mystr, t, DONT_SHOW_COMMAND, s.linkname);
+];
+
+Class Person
+    with description [; print (The) self, " is looking "; PrintAppearance(self); ""; ],
+    appearance 0,
+has animate proper;
+
+Person alice "Alice" savoyBallroom
+    with name 'alice',
+    linkname "appearance-alice",
+has female;
+Person bob "Bob" savoyBallroom
+    with name 'bob',
+    linkname "appearance-bob",
+has ;
+Person carol "Carol" savoyBallroom
+    with name 'carol',
+    linkname "appearance-carol",
+has ;
+Person david "David" savoyBallroom
+    with name 'david',
+    linkname "appearance-david",
+has ;
+
+
+[ CycleSub ;
+    noun.appearance = (noun.appearance + 1) % 5;
+    if (isVorpleSupported()) {
+        VorplePutContentInElement(noun.linkname, AppearanceName(noun));
+    } else { print (The) noun, " is now "; PrintAppearance(noun); "."; }
+];
+
+Verb 'cycle'
+* 'appearance' 'of' noun ->Cycle;

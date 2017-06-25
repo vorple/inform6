@@ -3,17 +3,126 @@ System_file;
 
 ! Vorple equivalent of Basic Screen Effects by Emily Short. Waiting for a keypress, clearing the screen, aligning, styling and coloring text.
 
+
+
+!================================
+! Utilities
+
+[ VorpleScreenHeight		i screen_height ;
+    if (isVorpleSupported()) {
+        return 24;
+    } else {
+        i = 0->32;
+        if (screen_height == 0 or 255) screen_height = 18;
+        screen_height = screen_height - 7;
+        return screen_height;
+    }
+];
+
+[ VorpleScreenWidth ;
+    if (isVorpleSupported()) {
+        return 80; ! FIXME when juhana replied
+    } else {
+	return ScreenWidth();
+    }
+];
+
+
+!================================
+! Aligned text
+
+Constant STYLE_FIXED_WIDTH = STYLE_MONOSPACE;
+
+[ VorpleCenterText str 		i j len;
+	if (isVorpleSupported()) {
+                VorplePlaceBlockLevelElement("center-align", str);
+	} else {
+		! Centering in Z-machine - always fixed-width, otherwise ugly
+		! TODO: glulx
+		font off;
+		print "^";
+		!i = ScreenWidth();
+                !print "i =",i;
+		!len = str-->0;       ! THIS IS NOT GOOD gives the wrong length
+                !print "len ="; print len;
+		!if (len > i-2) { len = i-2; }
+		!j = (i-len)/2 -1;
+                !print "j =",j;
+		!!!!!!!Print__Spaces(j);
+		print (PrintStringOrArray) str;
+		font on;
+	}
+];
+
+
+[ VorpleRightAlign str ;
+        !should we attempt something if IsVorpleSupported() == 0?
+        VorplePlaceBlockLevelElement("right-aligned", str);
+];
+
+
+
+
+!=======================================
+! Boxed quotations
+
+
+
+
+
+! TODO: what does this do?
+!
+! Section 3 - Displaying boxed quotations (in place of Section SR5/1/7 - Saying - Fonts and visual effects in Standard Rules by Graham Nelson)
+! 
+! To say bold type -- running on
+!	(documented at phs_bold):
+!	(- style bold; -).
+! To say italic type -- running on
+!	(documented at phs_italic):
+!	(- style underline; -).
+! To say roman type -- running on
+!	(documented at phs_roman):
+!	(- style roman; -).
+! To say fixed letter spacing -- running on
+!	(documented at phs_fixedspacing):
+!	(- font off; -).
+! To say variable letter spacing -- running on
+!	(documented at phs_varspacing):
+!	(- font on; -).
+! To display the boxed quotation (Q - text) in Glulx
+!	(documented at ph_boxed):
+!	(- DisplayBoxedQuotation({-box-quotation-text:Q}); -).
+
+
+[ VorpleBoxedQuotation text ;
+    if (isVorpleSupported()) {
+        VorplePlaceElement("blockquote", 0, text);
+    } else {
+        ! TODO: support for multi-line box quotations in the glulx fallback
+        ! note: "box text;" doesn't work!...
+        return ;
+    }
+];
+
+
+
+
+
+
+
 !=================================================
-! Styles
+! Styles and colors
+
 
 Constant STYLE_CURSIVE = 0;
 Constant STYLE_EMPHASIS = 1;
 Constant STYLE_FANTASY = 2;
+Constant STYLE_IMPACT = 2;
 Constant STYLE_MONOSPACE = 3;
 Constant STYLE_NOWRAP = 4;
 Constant STYLE_STRIKETHROUGH = 5;
 Constant STYLE_STRONG = 6;
-Constant STYLE_TRANSIENT = 7;
+! Constant STYLE_TRANSIENT = 7;
 Constant STYLE_UNDERLINE = 8;
 Constant STYLE_XXSMALL = 9;
 Constant STYLE_XSMALL = 10;
@@ -30,6 +139,14 @@ Constant STYLE_BLUE_LETTERS = 19;
 Constant STYLE_MAGENTA_LETTERS = 20;
 Constant STYLE_CYAN_LETTERS = 21;
 Constant STYLE_WHITE_LETTERS = 22;
+Constant STYLE_BROWN_LETTERS = 31;
+Constant STYLE_DARK_GRAY_LETTERS = 32;
+Constant STYLE_LIGHT_GRAY_LETTERS = 33;
+Constant STYLE_LIGHT_BLUE_LETTERS = 34;
+Constant STYLE_LIGHT_GREEN_LETTERS = 35;
+Constant STYLE_LIGHT_CYAN_LETTERS = 36;
+Constant STYLE_LIGHT_RED_LETTERS = 37;
+Constant STYLE_LIGHT_MAGENTA_LETTERS = 38;
 
 Constant STYLE_BLACK_BACKGROUND = 23;
 Constant STYLE_RED_BACKGROUND = 24;
@@ -39,256 +156,180 @@ Constant STYLE_BLUE_BACKGROUND = 27;
 Constant STYLE_MAGENTA_BACKGROUND = 28;
 Constant STYLE_CYAN_BACKGROUND = 29;
 Constant STYLE_WHITE_BACKGROUND = 30;
+Constant STYLE_BROWN_BACKGROUND = 39;
+Constant STYLE_DARK_GRAY_BACKGROUND = 40;
+Constant STYLE_LIGHT_GRAY_BACKGROUND = 41;
+Constant STYLE_LIGHT_BLUE_BACKGROUND = 42;
+Constant STYLE_LIGHT_GREEN_BACKGROUND = 43;
+Constant STYLE_LIGHT_CYAN_BACKGROUND = 44;
+Constant STYLE_LIGHT_RED_BACKGROUND = 45;
+Constant STYLE_LIGHT_MAGENTA_BACKGROUND = 46;
 
 [ StyleName sty ;
 	if (sty ofclass string) { return sty; }
 	switch(sty) {
-		STYLE_CURSIVE: return "cursive";
-		STYLE_EMPHASIS: return "emphasis";
-		STYLE_FANTASY: return "fantasy";
-		STYLE_MONOSPACE: return "monospace";
-		STYLE_NOWRAP: return "nowrap";
-		STYLE_STRIKETHROUGH: return "strikethrough";
-		STYLE_STRONG: return "strong";
-		STYLE_TRANSIENT: return "transient";
-		STYLE_UNDERLINE: return "underline";
-		STYLE_XXSMALL: return "xx-small";
-		STYLE_XSMALL: return "x-small";
-		STYLE_SMALL: return "small";
-		STYLE_LARGE: return "large";
-		STYLE_XLARGE: return "x-large";
-		STYLE_XXLARGE: return "xx-large";
-		STYLE_RED_LETTERS: return "red-foreground";
-		STYLE_GREEN_LETTERS: return "green-foreground";
-		STYLE_YELLOW_LETTERS: return "yellow-foreground";
-		STYLE_BLUE_LETTERS: return "blue-foreground";
-		STYLE_MAGENTA_LETTERS: return "magenta-foreground";
-		STYLE_CYAN_LETTERS: return "cyan-foreground";
-		STYLE_WHITE_LETTERS: return "white-foreground";
-		STYLE_BLACK_LETTERS: return "black-foreground";
-		STYLE_RED_BACKGROUND: return "red-background";
-		STYLE_GREEN_BACKGROUND: return "green-background";
-		STYLE_YELLOW_BACKGROUND: return "yellow-background";
-		STYLE_BLUE_BACKGROUND: return "blue-background";
-		STYLE_MAGENTA_BACKGROUND: return "magenta-background";
-		STYLE_CYAN_BACKGROUND: return "cyan-background";
-		STYLE_WHITE_BACKGROUND: return "white-background";
-		STYLE_BLACK_BACKGROUND: return "black-background";
+		STYLE_CURSIVE: return "cursive font";
+		STYLE_EMPHASIS: return "emphasized font";
+		STYLE_FANTASY: return "fantasy font";
+		STYLE_MONOSPACE: return "monospace font";
+		STYLE_NOWRAP: return "nowrap font";
+		STYLE_STRIKETHROUGH: return "strikethrough font";
+		STYLE_STRONG: return "strong font";
+!		STYLE_TRANSIENT: return "transient";
+		STYLE_UNDERLINE: return "underlined font";
+		STYLE_XXSMALL: return "xx-small font";
+		STYLE_XSMALL: return "x-small font";
+		STYLE_SMALL: return "small font";
+		STYLE_LARGE: return "large font";
+		STYLE_XLARGE: return "x-large font";
+		STYLE_XXLARGE: return "xx-large font";
+		STYLE_RED_LETTERS: return "red letters";
+		STYLE_GREEN_LETTERS: return "green letters";
+		STYLE_YELLOW_LETTERS: return "yellow letters";
+		STYLE_BLUE_LETTERS: return "blue letters";
+		STYLE_MAGENTA_LETTERS: return "magenta letters";
+		STYLE_CYAN_LETTERS: return "cyan letters";
+		STYLE_WHITE_LETTERS: return "white letters";
+		STYLE_BLACK_LETTERS: return "black letters";
+                STYLE_BROWN_LETTERS: return "brown letters";
+                STYLE_DARK_GRAY_LETTERS: return "dark gray letters";
+                STYLE_LIGHT_GRAY_LETTERS: return "light gray letters";
+                STYLE_LIGHT_BLUE_LETTERS: return "light blue letters";
+                STYLE_LIGHT_GREEN_LETTERS: return "light green letters";
+                STYLE_LIGHT_CYAN_LETTERS: return "light cyan letters";
+                STYLE_LIGHT_RED_LETTERS: return "light red letters";
+                STYLE_LIGHT_MAGENTA_LETTERS: return "light magenta letters";
+                
+		STYLE_RED_BACKGROUND: return "red background";
+		STYLE_GREEN_BACKGROUND: return "green background";
+		STYLE_YELLOW_BACKGROUND: return "yellow background";
+		STYLE_BLUE_BACKGROUND: return "blue background";
+		STYLE_MAGENTA_BACKGROUND: return "magenta background";
+		STYLE_CYAN_BACKGROUND: return "cyan background";
+		STYLE_WHITE_BACKGROUND: return "white background";
+		STYLE_BLACK_BACKGROUND: return "black background";
+                STYLE_BROWN_BACKGROUND: return "brown background";
+                STYLE_DARK_GRAY_BACKGROUND: return "dark gray background";
+                STYLE_LIGHT_GRAY_BACKGROUND: return "light gray background";
+                STYLE_LIGHT_BLUE_BACKGROUND: return "light blue background";
+                STYLE_LIGHT_GREEN_BACKGROUND: return "light green background";
+                STYLE_LIGHT_CYAN_BACKGROUND: return "light cyan background";
+                STYLE_LIGHT_RED_BACKGROUND: return "light red background";
+                STYLE_LIGHT_MAGENTA_BACKGROUND: return "light magenta background";
 		default: return "cursive";
 	}
 ];
 
 [ VorpleStyle style ;
-	VorpleExecuteJavaScriptCommand(BuildCommand("vorple.parser.openTag('span','", StyleName(style), "')"));
-];
-
-[ VorpleEndAllStyles ;
-	VorpleExecuteJavaScriptCommand("vorple.parser.closeAllTags()");
+    VorpleExecuteJavaScriptCommand(BuildCommand("vorple.layout.openTag('span', '", StyleName(style),"'.split(' ').join('-').toLowerCase())"));
 ];
 
 [ VorpleEndStyle ;
-	VorpleExecuteJavaScriptCommand("vorple.parser.closeTag()");
+    VorpleCloseHTMLTag();
+];
+
+!!!!!  -- not ready yet --
+
+[ VorpleApplyStyleToPage sty ;
+    return ;
+    ! VorpleExecuteJavaScriptCommand(BuildCommand("$('#vorpleContainer')[0].className=$('#vorpleContainer')[0].className.replace(/\b[a-z]+\-foreground/,'');$('#vorpleContainer').addClass('", color, "-foreground')"));
+];
+
+! TODO: how do i make it so that when opacity is not set (i.e. by default) it should be 100 ?
+[ VorpleSetElementTextColor classes red green blue opacity ;
+    ! set the text color to RGB, + opacity in percent
+    return ;
+];
+
+[ VorpleSetElementsTextColor classes red green blue opacity ;
+    VorpleSetElementTextColor(BuildCommand(classes, ":last"), red, green, blue, opacity);
+];
+
+[ VorpleSetElementBackgroundColor classes red green blue opacity ;
+    ! set background color to RGB, + opacity in percent
+    return ;
+];
+
+[ VorpleSetElementsBackgroundColor classes red green blue opacity ;
+    VorpleSetElementBackgroundColor(BuildCommand(classes, ":last"), red, green, blue, opacity);
 ];
 
 
-!==================================================
-! Colors
-
-Constant DEFAULT_STYLE=	1;
-Constant BLACK =		2;
-Constant RED =			3;
-Constant GREEN =		4;
-Constant YELLOW =		5;
-Constant BLUE =			6;
-Constant VIOLET =		7;
-Constant PURPLE =		7;
-Constant MAGENTA 		7;
-Constant CYAN =			8;
-Constant WHITE =		9;
-
-
-[ ColorName color ;
-	switch(color) {
-		BLACK: return "black";
-		RED: return "red";
-		GREEN: return "green";
-		YELLOW: return "yellow";
-		BLUE: return "blue";
-		MAGENTA: return "magenta";
-		CYAN: return "cyan";
-		WHITE: return "white";
-	}
-];
-
-[ VorpleDefaultStyle ;
-	if (IsVorpleSupported()) {
-		VorpleEndStyle();
-	} else { @set_colour 1 1; }
-];
-
+! TODO: is there a way to have Z-machine fallback for this? Here's the old code:
+!
+!
+![ VorpleDefaultStyle ;
+!	} else { @set_colour 1 1; }
+!];
+!
 ! To say red letters (letters written in red)
-[ VorpleColorLetters color ;
-	if (IsVorpleSupported()) {
-		if (color == DEFAULT_STYLE or 0) { VorpleDefaultStyle(); }
-		else { VorpleStyle(color+13); }
-	} else { @set_colour color 0; }
-];
-
+![ VorpleColorLetters color ;
+!	} else { @set_colour color 0; }
+!];
+!
 ! To say red background (background of letters from then on to the next EndStyle is red)
-[ VorpleColorLettersBackground color ;
-	if (IsVorpleSupported()) {
-		if (color == DEFAULT_STYLE or 0) { VorpleDefaultStyle(); }
-		else { VorpleStyle(color+21); }
-	} else { @set_colour 0 color; }
-];
-
+![ VorpleColorLettersBackground color ;
+!	} else { @set_colour 0 color; }
+!];
+!
 ! To turn the foreground red (the whole page has red foreground)
-[ VorpleForegroundColor color ;
-	if (IsVorpleSupported()) {
-		VorpleExecuteJavaScriptCommand(BuildCommand("$('#vorpleContainer')[0].className=$('#vorpleContainer')[0].className.replace(/@@92b[a-z]+@@92-foreground/,'');$('#vorpleContainer').addClass('", ColorName(color), "-foreground')"));
-	} else { @set_colour color 0; }
-];
-
+![ VorpleForegroundColor color ;
+!	} else { @set_colour color 0; }
+!];
+!
 ! To turn the background red (the whole page has red background)
-[ VorpleBackgroundColor color ;
-	if (IsVorpleSupported()) {
-		VorpleExecuteJavaScriptCommand(BuildCommand("$('#vorpleContainer')[0].className=$('#vorpleContainer')[0].className.replace(/@@92b[a-z]+@@92-background/,'');$('#vorpleContainer').addClass('", ColorName(color), "-background')"));
-	} else { @set_colour 0 color; }
+![ VorpleBackgroundColor color ;
+!	} else { @set_colour 0 color; }
+!];
+
+
+
+!!!!
+
+
+
+!=============================
+! Headers
+
+[ VorplePlaceHeader level text classes ;
+    if (classes == 0) { classes = ""; }
+    VorplePlaceElement(BuildCommand("h", IntToString(level)), classes, text);
 ];
 
 
-!=============================================
-! Spacing and pausing and clearing
+!=============================
+! Lists
 
-
-[ PressSpace i;
-	i=0;
-	while (i ~= 13 or 31 or 32) { i = KeyCharPrimitive(); }
+[ VorpleDisplayOrderedList list classes         len i ;
+    if (classes == 0) { classes = ""; }
+    ! List must be a table, like page 43 of DM4
+    len = list-->0;
+    VorpleOpenHTMLTag("ol", classes);
+    if (isVorpleSupported()) {
+        for (i=1: i<=len: i++) {
+            VorplePlaceElement("li", 0, list-->i);
+        }
+    } else {
+        for (i=1: i<=len: i++) {
+            print " "; print (string) IntToString(i); print ". "; print (string) list-->i; print "^";
+        }
+    }
+    VorpleCloseHTMLTag();
 ];
 
-! 0 = WIN_ALL (window + status bar), 1 = WIN_STATUS, 2 = WIN_MAIN
-[ VorpleClearScreen window;
-	if (IsVorpleSupported() && window ~= WIN_STATUS) {
-		VorpleExecuteJavaScriptCommand("$(vorple.parser._container.top).empty()");
-	} else {
-		ClearScreen(window);
-	}
-];
-
-[ VorplePause ;
-	print "^Please press SPACE to continue";
-	PressSpace();
-	VorpleClearScreen();
-];
-
-
-!==============================
-! Text alignment
-
-Constant STYLE_FIXED_WIDTH = STYLE_MONOSPACE;
-
-[ VorpleCenterText str fixedwidth 		i j len;
-	if (isVorpleSupported()) {
-		if (fixedwidth == STYLE_MONOSPACE) {
-			VorpleOpenHTMLTag("div", "centered");
-			VorplePlaceInlineElement("monospace", str);
-			VorpleCloseHTMLTag();
-		} else {
-			VorplePlaceBlockLevelElement("centered", str);
-		}
-	} else {
-		! Centering in Z-machine - always fixed-width, otherwise ugly
-		font off;
-		print "^";
-		i = ScreenWidth();
-		len = str-->0;
-		if (len > 63) { len = 63; }
-		j = (i-len)/2 -1;
-		Print__Spaces(j);
-		print (PrintStringOrArray) str;
-		font on;
-	}
-];
-
-[ VorpleCenterTextAtRow str depth 		i j len ;
-	font off;
-	i = ScreenWidth();
-	len = str-->0;
-	if (len > 63) { len = 63; }
-	j = (i-len)/2 - 1;
-	MoveCursor(depth, j);
-	print (PrintStringOrArray) str;
-	font on;
-];
-
-
-[ VorpleRightAlign str ;
-	! should we attempt something if IsVorpleSupported() == 0?
-	VorplePlaceBlockLevelElement("right-aligned", str);
-];
-
-
-! === Blockquotes
-
-[ VorplePlaceBlockquoteElement classes txt ;
-	VorplePlaceElement("blockquote", classes, txt);
-];
-
-[ VorpleHideLastBlockquote ;
-	VorpleExecuteJavaScriptCommand("$('blockquote:last').animate({opacity:0},500).slideUp(500,function(){$(this).remove()}");
-];
-
-[ VorpleHideAllBlockquotes ;
-	VorpleExecuteJavaScriptCommand("$('blockquote').animate({opacity:0},500).slideUp(500,function(){$(this).remove()}");
-];
-
-
-
-!======== Status line
-!  The way status lines are handled is different in I7 (through tables)
-!  So if you want to draw your own status line, you have to use
-!       Replace DrawStatusLine
-!  before including "parser".
-!  The following routines help you write your own DrawStatusLine.
-
-[ VorpleScreenHeight		i screen_height ;
-	i = 0->32;
-		  if (screen_height == 0 or 255) screen_height = 18;
-		  screen_height = screen_height - 7;
-	return screen_height;
-];
-
-[ VorpleScreenWidth ;    ! this is only to avoid answering questions
-	return ScreenWidth();
-];
-
-[ VorpleDeepStatus depth 		screen_width ;		! i screen_width ;
-    StatusLineHeight(depth);
-    screen_width = ScreenWidth();
-    ClearScreen(1);
-!	Here is Vorple's I6 code for this, which I don't understand - why wouldn't ClearScreen(1) work in Z-code?
-!    #ifdef TARGET_GLULX;
-!        ClearScreen(1);
-!    #ifnot;
-!        style reverse;
-!        for (i=1:i<depth+1:i++)
-!        {
-!             @set_cursor i 1;
-!             spaces(screen_width);
-!        }
-!    #endif;
-];
-
-[ VorpleSelectLineInStatus depth ;
-	MoveCursor(depth, 1);
-];
-
-
-Global Vorple_right_alignment_depth = 14;
-
-[ VorpleRightAlignStatusLine depth        screen_width o n;
-	screen_width = ScreenWidth();
-	n = Vorple_right_alignment_depth;
-	o = screen_width - n;
-	MoveCursor(depth, o);
+[ VorpleDisplayUnorderedList list classes         len i ;
+    if (classes == 0) { classes = ""; }
+    ! List must be a table, like page 43 of DM4
+    len = list-->0;
+    VorpleOpenHTMLTag("ul", classes);
+    if (isVorpleSupported()) {
+        for (i=1: i<=len: i++) {
+            VorplePlaceElement("li", 0, list-->i);
+        }
+    } else {
+        for (i=1: i<=len: i++) {
+            print " * "; print (string) list-->i; print "^";
+        }
+    }
+    VorpleCloseHTMLTag();
 ];

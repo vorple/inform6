@@ -1,0 +1,25 @@
+WINDOWS
+-------
+
+- Download and unzip http://nginx.org/download/nginx-1.10.3.zip
+- Inside the zip is a folder called "html". Put the whole Inform 7 project and its materials folder there directly under the html folder (so you'll have e.g. html/Project Name.inform and html/Project Name.materials folders).
+- Run nginx.exe which is also inside the zip. Nothing visible happens, but it starts the local server. You can confirm by opening http://localhost on a browser which should show a welcome message. (The welcome message says that further configuration is needed but that's not true.) It'll keep running until you reboot the computer.
+- Build the I7 project by clicking Release. Don't click on the "Browse" buttons that Inform offers, they won't work.
+- Open a browser, go to http://localhost/Project Name.materials/Release/play.html but replace "Project Name.materials" with the actual name of the materials folder.
+
+
+macOS
+-----
+
+- Open Terminal (Applications/Utilities/Terminal.app)
+- Go to the Inform project's materials folder (type "cd " without quotes, including the space, and drag the materials folder from Finder to the Terminal window to get the full path, then press enter)
+- Type "python -m SimpleHTTPServer" without quotes
+- Release the project in Inform, open browser, go to http://localhost:8000/Release/play.html
+
+
+Linux
+-----
+
+If you have Python 2, the same command as with macOS applies.
+If you have Python 3, the command is "python3 -m http.server".
+If you have neither (for instance, you get "command not found"), you need to install Python 2 with the Linux distribution's package manager.

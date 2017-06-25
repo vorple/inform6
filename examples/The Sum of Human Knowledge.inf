@@ -1,3 +1,9 @@
+! The Sum of Human Knowledge - Retrieving and displaying data from a third party service.
+
+! Here we set up an encyclopedia that can be used to query articles from Wikipedia. The actual querying code is a bit longer so it's placed in an external encyclopedia.js file, which can be downloaded from http://vorple-if.com/doc/resources.zip . Put the file in the project's Resources folder to include it with the release.
+
+! Note that the pause between issuing the lookup command and the encyclopedia text appearing on the screen is caused by the time it takes to send a request to and receive a response from Wikipedia.
+
 Constant Story "The Sum of Human Knowledge^";
 
                        Include "vorple.h";
@@ -19,6 +25,7 @@ Include "grammar";
 ! look up wikipedia pages with caps (except the first one); for instance names
 ! of people ("Pete Best") will not be found ("Pete best" doesn't exist).
 
+! The example "The Sum of Human Knowledge" shows one use case where we might want to block the user interface: it takes some time for the request to Wikipedia to finish and we don't want the player to continue before the response has been shown on the screen.
 
 Object library "Library"
 	with description "The shelves are filled with volumes of an encyclopedia. You can look up any topic you want.",
@@ -28,15 +35,17 @@ Array myTopic buffer 1000;
 
 [ LookUpTopicSub 	i;
 	! build array
-	@output_stream 3 myTopic;
-	for (i=10: i<buffer->1+2: i++) { !  start at 10 because you start at 2 and you skip "look up "
-		print (char) buffer->i;
+	bp_output_stream(3, myTopic, 1000);
+	for (i=8: i<(buffer-->0): i++) { ! skip "look up "
+		print (char) buffer->(WORDSIZE+i);
 	}
-	@output_stream -3;
+	bp_output_stream(-3);
 	! send it
 	if (isVorpleSupported()){
 		VorplePlaceBlockLevelElement("dictionary-entry", "");
 		VorpleExecuteJavaScriptCommand( BuildCommand("wikipedia_query('", VorpleEscape(myTopic), "')"));
+		! run paragraph on ?
+		VorpleBlockUserInterface();
 	} else {
 		print "You find the correct volume and learn about ";
 		print (PrintStringOrArray) myTopic;

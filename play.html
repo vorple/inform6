@@ -1,67 +1,105 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Vorple Play</title>
+  <title>Anonymous - Untitled — Play</title>
   <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
   <meta name="viewport" content="width=device-width, user-scalable=no">
-  <meta name="author" content="Hugo Labrande & Juhana Leinonen">
+  <meta name="author" content="Anonymous">
   <link rel="stylesheet" href="style.css">
+  
+  <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <script type="text/javascript" src="interpreter/vorple.parchment.min.js"></script>
-<script type="text/javascript">
-// The loading message can be changed by setting a global variable
-// vorpleLoaderMessage in a custom JavaScript file
-$( function() {
-$( '#vorpleLoader' ).html(
-typeof vorpleLoaderMessage === 'string' ? vorpleLoaderMessage : 'Loading...'
-);
-});
-</script>
-
-<link rel="stylesheet" href="interpreter/vorple.css">
-
-<script type="text/javascript" src="examples/resources/javascript/encyclopedia.js"></script>
-<link rel="stylesheet" href="examples/resources/css/montyhall.css">
-
-<script type="text/javascript">
-parchment.options.lib_path = 'interpreter/';
-parchment.options.default_story = [ "test.z5" ];
-parchment.options.lock_story = 1;
-
-
-vorple.media.defaults.swfPath = 'interpreter/';
-vorple.media.defaults.audioPath = 'examples/resources/audio';
-vorple.media.defaults.imagePath = 'examples/resources/image';
-vorple.media.defaults.musicPath = 'examples/resources/music';
-vorple.media.defaults.videoPath = 'examples/resources/';
-
-$( function() {
-$( '.coverimage, .links, .interpretercredit' ).detach();
-$( '#vorpleContainer' ).unwrap();
-
-vorple.core.init( parchment );
-parchment.init();
-});
-</script>
-
+<link rel="stylesheet" href="interpreter/toastr.min.css">
+<link rel="stylesheet" href="interpreter/vex.css">
+<link rel="stylesheet" href="interpreter/vex-theme-plain.css">
+<link rel="stylesheet" href="interpreter/jquery.powertip.min.css">
+<link rel="stylesheet" href="interpreter/vorple.min.css">
+  
  </head>
 <body class="play">
 <div class="container">
-<div class="coverimage"><span><a href="Cover.jpg"><img src="Small Cover.jpg" border="1" /></a></span></div>
+<div class="coverimage"><span><a href="Cover.jpg"><img src="Small Cover.jpg" border="1"></a></span></div>
 <div class="links">
-<div class="smalltitle">Vorple-6L02</div>
+<div class="smalltitle">Untitled</div>
 <ul>
 <li><a href="index.html">Home page</a></li>
 </ul>
 </div>
 
 <div id="gameport">
-<div id="vorpleContainer">
-<div id="vorple"><div id="vorpleLoader"></div></div>
-<div id="vorpleInput"></div>
-<div id="parchment"></div>
-<div class="clearAll"></div>
+<main id="haven">
+<div id="output">
+<div id="window0" aria-live="polite" aria-atomic="false" aria-relevant="additions"></div>
 </div>
+
+<form id="lineinput">
+<label id="lineinput-prefix" for="lineinput-field">#</label><input name="lineinput" id="lineinput-field" type="text" autocapitalize="none">
+</form>
+
+<div id="loader">
+<h2 id="loader-message">Loading scripts</h2>
+<div id="spinner">V</div>
+</div>
+</main>
+
+<script type="text/javascript" src="interpreter/jquery.min.js"></script>
+<script type="text/javascript" src="interpreter/toastr.min.js"></script>
+<script type="text/javascript" src="interpreter/vex.combined.min.js"></script>
+<script type="text/javascript" src="interpreter/jquery.powertip.min.js"></script>
+<script type="text/javascript" src="interpreter/haven.min.js"></script>
+<script type="text/javascript" src="interpreter/vorple.min.js"></script>
+
+<script>
+if( location.protocol === "file:" ) {
+$( 'body' )
+.empty()
+.html( "<div>You are currently viewing the page from the filesystem. " +
+"Unfortunately Vorple requires that the page is viewed through " +
+"the HTTP protocol, that is, you'll need to either upload it " +
+"to the Internet or install a local server.</div>" )
+.find( 'div' )
+.css({
+margin: "2em",
+padding: "1em",
+color: "#fff",
+backgroundColor: "rgb(137, 50, 58)",
+border: "3px solid gray"
+});
+
+throw new Error( "Vorple can't be run from the filesystem" );
+}
+
+$( function() {
+$( '#haven' ).prependTo( 'body' );
+$( '.container, .interpretercredit' ).remove();
+});
+
+Module.locateFile = function( name ) {
+return "interpreter/" + name;
+};
+
+vorple.options = {
+autosave: false,
+engineColors: false,
+
+// URL to the game file
+//story: "story.gblorb"
+story: "test.ulx"
+};
+
+vorple.debug.off();
+
+// paths for multimedia
+vorple.options.resource_paths = {
+  images: 'resources/images',
+  audio: 'resources/audio'
+};
+
+vorple.init();
+</script>
+
+<script src="interpreter/git.js" defer></script>
 </div>
 
 </div>

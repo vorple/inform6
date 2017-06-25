@@ -1,3 +1,5 @@
+! Medical Dictionary - Technical terms that have their definitions shown in a tooltip.
+
 Constant Story "Medical Dictionary^";
 
                     Include "vorple.h";

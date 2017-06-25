@@ -1,0 +1,31 @@
+! Version Popup - Show the version information in a modal window
+
+
+Constant Story "Version Popup^";
+
+                          Include "vorple.h";
+Include "parser";
+Include "verblib";
+                          Include "vorple-modal-windows.h";
+Include "grammar";
+
+
+[ Initialise ;
+	location = room;
+	VorpleInitialise();
+];
+
+Object room "Room"
+    with description "",
+has light;
+
+[ MyVersionSub ;
+    VorpleShowModalWindow("");
+    VorpleSetFocusToModalWindow();
+    VersionSub();
+    VorpleSetOutputFocusMainWindow();
+    "";
+];
+
+Extend 'version' replace
+*           ->MyVersion;

@@ -1,3 +1,15 @@
+! Port Royal Reggae - Applying background music to different regions.
+
+! We'll spice up the Port Royal example from Writing with Inform with some background music.
+
+! When the player moves around the map the music will change according to the region they're in. We'll assign each region a music file, and the music changes only if the new room is in a different region than the one we just came from so that the same sound file won't start over when the player moves inside the same region. 
+
+! With small modifications the code could be used with individual rooms or scenes.
+
+! The audio files used here can be downloaded from http://vorple-if.com/doc/inform7/examples .
+! You should have one folder for the audio and one folder for the images, and change the "vorple.options.resource_paths" in play.html to point to the right folders.
+
+
 Constant Story "1691^";
 
                        Include "vorple.h";
@@ -6,14 +18,7 @@ Include "verblib";
                        Include "vorple-multimedia.h";
 Include "grammar";
 
-! WARNING: to use this, you must point "play.html" to the right folders
-!   (by default, it'll look in the same folder as the one it is in)
-!   the best way is to create a 'resources' folder in the folder where "play.html" is and then write
-!		vorple.media.defaults.audioPath = 'resources/';
-!		vorple.media.defaults.imagePath = 'resources/';
-!		vorple.media.defaults.musicPath = 'resources/';
-!		vorple.media.defaults.videoPath = 'resources/';
-!   at the right place in 'play.html'
+
 
 
 [ Initialise ;
@@ -80,7 +85,8 @@ Waterfront thamesStreetEnd "Thames Street End"
 has light;
 
 Inland limeStreet "Lime Street"
-	with n_to thamesStreetEnd,
+	with description "",
+	n_to thamesStreetEnd,
 	s_to queenStreetEnd,
 has light;
 

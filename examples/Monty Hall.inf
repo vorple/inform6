@@ -1,3 +1,14 @@
+! Monty Hall - A game show where the result is displayed with fancy font effects.
+
+! Imagine a game show where you are presented with three doors. Behind one of them is a brand new car, and behind the rest are goats. You get to choose one of the doors. Then the game host opens one of the other doors revealing a goat, and you are given a chance to either switch to the one remaining door or open the one you picked originally. The Monty Hall paradox is a counterintuitive statistical fact that switching the door gives a much higher chance at finding a car behind it.
+
+! We'll display the game's result using a custom-made CSS style file. It also styles the room header and uses a font from Google Fonts (http://www.google.com/fonts/).
+
+! The CSS file can be downloaded from http://vorple-if.com/doc/inform7/examples . You then have to add
+!    <link rel="stylesheet" href="resources/css/montyhall.css">
+! to play.html.
+
+
 Constant Story "Monty Hall^";
 
                        Include "vorple.h";
@@ -32,10 +43,6 @@ Include "grammar";
 	if (car in doorB) { move goat1 to doorA; move goat2 to doorC;}
 	if (car in doorC) { move goat1 to doorA; move goat2 to doorB;}
 ];
-
-! This example requires you to add
-!    <link rel="stylesheet" href="resources/css/montyhall.css">
-! to play.html (the css file is available on the Vorple webpage)
 
 
 

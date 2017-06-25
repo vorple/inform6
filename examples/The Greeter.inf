@@ -1,0 +1,27 @@
+! The Greeter - Showing a modal at the start of the play
+
+! This basic example pops up the modal when the play begins and displays the story title and some basic gameplay instructions.
+
+
+Constant Story "The Greeter";
+Constant Headline "^";
+
+                          Include "vorple.h";
+Include "parser";
+Include "verblib";
+                          Include "vorple-modal-windows.h";
+Include "grammar";
+
+
+[ Initialise ;
+	location = room;
+	VorpleInitialise();
+	VorpleShowModalWindow();
+	VorpleSetFocusToModalWindow();
+	print "Welcome to "; print (string) Story; print "! Use LOOK to look around, EXAMINE what you see, and TAKE what you can!";
+	VorpleSetOutputFocusMainWindow();
+];
+
+Object room "Room"
+    with description "",
+has light;

@@ -1,3 +1,7 @@
+! Ibid. (2) - Footnotes that can be read by placing the mouse cursor over them.
+
+! A modification of the Inform 7 example 300 (Ibid.) to show the footnotes when the mouse cursor is on top of the footnote reference numbers.
+
 Constant Story "Ibid. (2)^";
 
                        Include "vorple.h";
@@ -16,8 +20,8 @@ Array numberstring buffer 12;
 
 [ ListOfFootnotes i ;
 	switch(i) {
-		0: return "Francis Drake ate here, if the sign on the door is to be believed";
-		1: return "This is unlikely, considering that owls are protected animals in England these days";
+		0: return "Francis Drake ate here, if the sign on the door is to be believed.";
+		1: return "This is unlikely, considering that owls are protected animals in England these days.";
 		2: return "This young man is a young Gary Cooper.";
 		default: return "";
 	}
@@ -31,9 +35,9 @@ Array numberstring buffer 12;
 			footnotes_mentioned++;
 			footnotes_number-->i = footnotes_mentioned;
 		}
-		@output_stream 3 numberstring;
+		bp_output_stream(3, numberstring, 12);
 		print "(", (PrintStringOrArray) IntToString(footnotes_number-->i), ")";
-		@output_stream -3;
+		bp_output_stream(-3);
 		VorpleTooltipMouse(numberstring, ListOfFootnotes(i));
 	}
 ];

@@ -1,3 +1,9 @@
+
+! Scrambled Eggs - Hints that are initially shown obscured and revealed on request.
+
+! The hint system works by wrapping scrambled hints in named elements. Their contents can then be later replaced with unscrambled text.
+
+
 Constant Story "Scrambled Eggs^";
 
                        Include "vorple.h";

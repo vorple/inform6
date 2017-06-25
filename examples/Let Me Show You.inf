@@ -1,0 +1,68 @@
+! Let Me Show You - A walkthrough command that automatically runs commands
+
+! Many stories include a WALKTHROUGH command that either shows the list of commands that get you to the end or tells you where to find it. Here we're making a walkthrough command that actually enters the commands on the player's behalf.
+
+
+Constant Story "Let Me Show You^";
+
+                          Include "vorple.h";
+Include "parser";
+Include "verblib";
+                          Include "vorple-command-prompt-control.h";
+Include "grammar";
+
+
+[ Initialise ;
+	location = occultStore;
+	VorpleInitialise();
+];
+
+Object occultStore "Occult Store"
+    with description "",
+has light;
+
+Global correct_steps = 0;
+
+Object puzzlebox "puzzle box" occultStore
+    with description "An intricate, wooden box with all sorts of weird decorations, including a carving of the moon, a wooden rabbit's ear, and a jewel.",
+    name 'puzzle' 'box',
+    each_turn [; if (correct_steps == 3) { correct_steps=0; give self ~locked; "There's an audible rumble as the mechanism inside the puzzle box turns and finally unlocks the box."; } ],
+has container openable lockable locked;
+
+Object mooncarving "moon carving" occultStore
+    with name 'moon' 'carving',
+    touched 0,
+    before [; Push: if (self.touched==0) { self.touched++; correct_steps++; "You hear a faint click."; } ],
+has concealed scenery;
+Object rabbitear "rabbit's ear" occultStore
+    with name 'rabbit' 'rabbit^s' '^s' 'ear',
+    touched 0,
+    before [; Pull: if (self.touched==0) { self.touched++; correct_steps++; "The ear decoration moves a little."; } ],
+has concealed scenery;
+Object jewel "jewel" occultStore
+    with name 'jewel',
+    touched 0,
+    before [; Turn: if (self.touched==0) { self.touched++; correct_steps++; "The jewel turns just a bit."; } ],
+has concealed scenery;
+
+Object secret "secret" puzzlebox
+    with name 'secret',
+has ;
+
+[ WalkthroughSub ;
+    if (isVorpleSupported()) {
+        print "Ok, let's go...";
+        if (~(puzzlebox in player)) {
+            VorpleQueueCommand("take puzzle box");
+        } ! note that at this point the "take puzzle box" command is still in the queue, so the command hasn't been taken place and we haven't taken the puzzle box yet
+        VorpleQueueCommand("push moon");
+        VorpleQueueCommand("pull ear");
+        VorpleQueueCommand("turn jewel");
+        "";        
+    } else {
+        print "Try this: PUSH MOON / PULL EAR / TURN JEWEL";
+    }
+];
+
+Verb meta 'walkthrough' 'walkthru'
+*		->Walkthrough;

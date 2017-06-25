@@ -1,0 +1,48 @@
+! Clarification Helper - Prefilling the command line with a partial command
+
+! This example shows brings the player's command back to the command prompt after the story has shown the "What do you want to..." clarification request. If the player types just "take", the story asks "What do you want to take?". The word "take" is added to the next prompt and the player can continue typing with the name of the thing that they wanted to take.
+
+Constant Story "Clarification Helper^";
+
+                          Include "vorple.h";
+Include "parser";
+
+
+Object LibraryMessages
+    with before[;
+        Miscellany:
+            if (lm_n==48) {PrefillWithCommand();}
+            if (lm_n==49) {PrefillWithCommand();}
+    ];
+
+Include "verblib";
+                          Include "vorple-command-prompt-control.h";
+
+
+Array mystr buffer 100; ! to prefill the prompt with the incomplete command
+[ PrefillWithCommand ;
+    bp_output_stream(3, mystr, 100);
+    PrintCommand();
+    print " ";
+    bp_output_stream(-3);
+    VorplePrefillPrompt(mystr);
+];
+    
+    
+Include "grammar";
+
+
+[ Initialise ;
+	location = playroom;
+	VorpleInitialise();
+];
+
+Object playroom "Playroom"
+    with description "A simple playroom.",
+has light ;
+
+Object woodenblock "wooden block" playroom
+    with name 'wooden' 'block';
+    
+Object toyhorse "toy horse" playroom
+    with name 'toy' 'horse';

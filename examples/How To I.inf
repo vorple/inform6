@@ -1,3 +1,5 @@
+! How To I - Showing small tips to new players who might not be familiar with the standard IF conventions.
+
 Constant Story "How To I^";
 
                           Include "vorple.h";
@@ -9,12 +11,11 @@ Include "grammar";
 [ Initialise ;
 	location = lab;
 	VorpleInitialise();
+	VorpleNotification("Type LOOK (or just L) to see the room description again.");
 ];
 
 Object lab "Laboratory"
-	with description [; print "You're in a fancy laboratory.";
-			if (turns==0) { VorpleNotification("Type LOOK (or just L) to see the room description again.");	}
-		],
+	with description "You're in a fancy laboratory. North is a corridor.",
 	n_to corridor,
 has light ;
 
@@ -37,6 +38,7 @@ Object trolley "trolley" lab
 		}
 		"";
 	],
+	before [; PushDir: AllowPushDir(); rtrue; ],
 has ;
 
 

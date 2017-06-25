@@ -1,0 +1,92 @@
+! The Manchurian Candidate - Retroactively replacing the player's commands
+
+! A common trick to force the player to type a specific command is to print a fake command prompt, wait for keypresses and print the predetermined command one character at a time, regardless of what keys the player actually presses.
+
+! Thanks to the full control we have over the command line and the output, we can take the effect one step further and switch the player's command to something else after the player has already typed it.
+
+! This example gives the effect the full treatment: the player's command is intercepted and replaced with a new one inside the game itself, in the scrollback, and in the command history. The fake commands are functionally identical to any commands the user would have typed themselves.
+
+
+Constant Story "The Manchurian Candidate^";
+
+Global commandnumber=0;
+
+[ BeforeParsing         mycommand ;
+    if (commandnumber > 5) { return; }
+    switch(commandnumber) {
+        0: mycommand="enter book depository";
+        1: mycommand="up";
+        2: mycommand="open window";
+        3: mycommand="inventory";
+        4: mycommand="put rifle on sill";
+        5: mycommand="shoot";
+    }
+    mycommand.print_to_array(buffer, 25);
+    Tokenise__(buffer,parse);
+    VorpleChangeLastCommand(mycommand);
+    VorpleChangeLastCommandInHistory(mycommand);
+    commandnumber++;
+];
+
+                          Include "vorple.h";
+Include "parser";
+Include "verblib";
+                          Include "vorple-command-prompt-control.h";
+Include "grammar";
+
+
+[ Initialise ;
+	location = elmstreet;
+	VorpleInitialise();
+	move rifle to player;
+];
+
+Object rifle "rifle"
+    with description "",
+    name 'rifle',
+has ;
+
+Object elmstreet "Elm Street"
+    with description "",
+has light;
+
+Object bookdepository "book depository" elmstreet
+    with description "",
+    name 'book' 'depository',
+    before [; Enter: print "Something compels you to go inside the book depository."; PlayerTo(bookdepositoryfoyer); ""; ],
+has scenery enterable open;
+
+Object bookdepositoryfoyer "Book Depository Foyer"
+    with description "",
+    u_to [; print "You can't help but move up the stairs."; return sixthfloor;],
+has light;
+
+Object sixthfloor "Sixth Floor"
+    with description "",
+has light;
+
+Object window "window" sixthfloor
+    with description "",
+    name 'window',
+    before [; Open: "The presidential motorcade is just approaching in the distance."; ],
+has openable;
+
+Object sill "sill" sixthfloor
+    with description "",
+    name 'sill',
+    after [; Receive: if (noun == rifle) { "You place the rifle on the window sill."; } ],
+has supporter;
+
+[ ShootSub;
+    print "Without hesitation you take aim and squeeze the trigger...";
+    deadflag=2;
+];
+
+[ MyInvSub;
+    "You are carrying a rifle. You can't remember where you got it.";
+];
+
+Verb 'shoot'
+*       -> Shoot;
+Extend 'inventory' first
+*       -> MyInv;

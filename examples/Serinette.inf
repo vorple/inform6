@@ -1,3 +1,11 @@
+
+! Serinette - Basic example of playing music and sound effects.
+
+! The serinette (a type of music box) plays music when it opens and a sound effect when it's wound. We'll also show its picture when it's examined.
+! The example media files can be downloaded from http://vorple-if.com/doc/inform7/examples .
+
+! You should have one folder for the audio and one folder for the images, and change the "vorple.options.resource_paths" in play.html to point to the right folders.
+
 Constant Story "Serinette^";
 
                        Include "vorple.h";
@@ -6,14 +14,6 @@ Include "verblib";
                        Include "vorple-multimedia.h";
 Include "grammar";
 
-! WARNING: to use this, you must point "play.html" to the right folders
-!   (by default, it'll look in the same folder as the one it is in)
-!   the best way is to create a 'resources' folder in the folder where "play.html" is and then write
-!		vorple.media.defaults.audioPath = 'resources/';
-!		vorple.media.defaults.imagePath = 'resources/';
-!		vorple.media.defaults.musicPath = 'resources/';
-!		vorple.media.defaults.videoPath = 'resources/';
-!   at the right place in 'play.html'
 
 
 [ Initialise ;
@@ -32,16 +32,17 @@ has light;
 
 [ PlayTune ;
 	VorplePlayMusic("musicbox.mp3");
+	give serinette ~wound;
 ];
 
 Object serinette "serinette" drawingroom
-	with description [; VorpleImage("serinette.jpg", IMAGE_CENTERED); "There's a winding key behind the box."; ],
+	with description [; VorpleImage("serinette.jpg", "A music box", IMAGE_CENTERED); "There's a winding key behind the box."; ],
 	describe "A beautiful music box sits on a table.",
 	name 'serinette' 'music' 'box',
-	before [; Wind: give self wound; VorplePlaySound("winding.mp3"); if (self has open) {PlayTune();} "You turn the winding key until it turns no more.";
+	before [; Wind: give self wound; VorplePlaySoundEffect("winding.mp3"); if (self has open) {PlayTune();} "You turn the winding key until it turns no more.";
 		Receive: "It's not the kind of box that can contain anything other than its own mechanism.";
 		Open: if (self has wound) {PlayTune(); } else {"Nothing happens. Looks like it must be wound first.";}
-		Close: if (self has wound) { VorpleStopMusic(); }
+		Close: VorpleStopMusic();
 		],
 has openable container transparent;
 

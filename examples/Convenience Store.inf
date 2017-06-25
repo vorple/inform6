@@ -1,3 +1,8 @@
+
+! Convenience Store - Displaying the inventory styled as a HTML list.
+
+! We'll display the inventory listing using HTML unordered lists ("ul"). It might not be immediately obvious why one would want to do this, but if the items are displayed in a proper HTML structure it's possible to use CSS to style them further.
+
 Constant Story "Convenience Store^";
 
                           Include "vorple.h";
@@ -48,12 +53,12 @@ Array objectname buffer 300;
 		print ":^";
 		VorpleOpenHTMLTag("ul");
 		objectloop (i in player) {
-			@output_stream 3 objectname; print (string) i.article; print " "; print (name) i; @output_stream -3;
+                        bp_output_stream(3, objectname, 300); print (string) i.article; print " "; print (name) i; bp_output_stream(-3);
 			VorplePlaceElement("li", "", objectname);
 			if (child(i)) {
 				VorpleOpenHTMLTag("ul");
 				objectloop(j in i) {
-					@output_stream 3 objectname; print (string) j.article; print " "; print (name) j; @output_stream -3;
+					bp_output_stream(3, objectname, 300); print (string) j.article; print " "; print (name) j; bp_output_stream(-3);
 					VorplePlaceElement("li", "", objectname);
 				}
 				VorpleCloseHTMLTag();

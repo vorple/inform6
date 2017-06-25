@@ -3,81 +3,63 @@ System_file;
 
 Constant VORPLE_NOTIFICATIONS_LIBRARY;	! to let vorple know this is included
 
-! "Notifications and dialogs."
+! "Notifications that display a short message on the screen and disappear after a few seconds."
 
-!============================================
-! Element positions and their names
 
-Constant VORPLE_POSITION_TOP_LEFT = 0;
-Constant VORPLE_POSITION_TOP_CENTER = 1;
-Constant VORPLE_POSITION_TOP_RIGHT = 2;
-Constant VORPLE_POSITION_LEFT_TOP = 3;
-Constant VORPLE_POSITION_RIGHT_TOP = 4;
-Constant VORPLE_POSITION_LEFT_CENTER = 5;
-Constant VORPLE_POSITION_CENTER_LEFT = 6;
-Constant VORPLE_POSITION_SCREEN_CENTER = 7;
-Constant VORPLE_POSITION_RIGHT_CENTER = 8;
-Constant VORPLE_POSITION_CENTER_RIGHT = 9;
-Constant VORPLE_POSITION_LEFT_BOTTOM = 10;
-Constant VORPLE_POSITION_RIGHT_BOTTOM = 11;
-Constant VORPLE_POSITION_BOTTOM_LEFT = 12;
-Constant VORPLE_POSITION_BOTTOM_CENTER = 13;
-Constant VORPLE_POSITION_BOTTOM_RIGHT = 14;
-Constant VORPLE_POSITION_TOP_BANNER = 15;
-Constant VORPLE_POSITION_BOTTOM_BANNER = 16;
+!========================================
+! Displaying a notification
+! Vorple uses toastr and its built-in types
 
-! noty name
-[ VorplePositionName pos ;
-	switch(pos) {
-		VORPLE_POSITION_TOP_BANNER: return "top";
-		VORPLE_POSITION_BOTTOM_BANNER: return "bottom";
-		VORPLE_POSITION_TOP_LEFT: return "topLeft";
-		VORPLE_POSITION_TOP_CENTER: return "topCenter";
-		VORPLE_POSITION_TOP_RIGHT: return "topRight";
-		VORPLE_POSITION_CENTER_LEFT: return "centerLeft";
-		VORPLE_POSITION_SCREEN_CENTER: return "center";
-		VORPLE_POSITION_CENTER_RIGHT: return "centerRight";
-		VORPLE_POSITION_BOTTOM_LEFT: return "bottomLeft";
-		VORPLE_POSITION_BOTTOM_CENTER: return "bottomCenter";
-		VORPLE_POSITION_BOTTOM_RIGHT: return "bottomRight";
-		default: return "";
-	}
+Constant NOTIFICATION_INFO = 1;
+Constant NOTIFICATION_SUCCESS = 2;
+Constant NOTIFICATION_WARNING = 3;
+Constant NOTIFICATION_ERROR = 4;
+
+! by default, notifications last for 7 seconds
+Global NOTIFICATION_DURATION = 7;
+
+[ VorpleNotification text type title duration   typestr ;
+        switch(type){
+            NOTIFICATION_INFO: typestr="info";
+            NOTIFICATION_SUCCESS: typestr="success";
+            NOTIFICATION_WARNING: typestr="warning";
+            NOTIFICATION_ERROR: typestr="error";
+            default: typestr="info";
+        }
+        if (duration == 0) { duration = NOTIFICATION_DURATION; }
+        if (title == 0) {
+            VorpleExecuteJavaScriptCommand(BuildCommand("toastr.", typestr, "('", VorpleEscape(text), "',{timeOut: ", IntToString(duration), "000, escapeHtml: true})"));
+        } else {
+            ! we have two strings to escape, but the way the utils work it's easier to do it this way
+            !@output_stream 3 hugehugestr;
+            bp_output_stream(3, hugehugestr, 2000);
+            print "toastr.";
+            PrintStringOrArray(typestr);
+            print "('";
+            PrintStringOrArray(VorpleEscape(text));
+            print "','";
+            PrintStringOrArray(VorpleEscape(title));
+            print "',{timeOut: ";
+            PrintStringOrArray(IntToString(duration));
+            print "000, escapeHtml: true})";
+            !@output_stream -3;
+            bp_output_stream(-3);
+            VorpleExecuteJavaScriptCommand(hugehugestr);
+        }
+        VorpleInsertNotification(text);
 ];
 
 
 !=============================================
-! Functions
+! The same behavior, but for interpreters for which Vorple isn't supported
 
 Constant VORPLE_MAX_NUMBER_NOTIFS = 16;
 
 Array displayednotifs table VORPLE_MAX_NUMBER_NOTIFS;
 Global Vorple_notifarraysinit = 0;
 
-[ VorpleNotification str pos ;
-	if (pos == 0) {
-		VorpleExecuteJavaScriptCommand(BuildCommand("vorple.notify.show('", VorpleEscape(str), "')"));
-	} else {
-		VorpleExecuteJavaScriptCommand(BuildCommand("vorple.notify.show('", VorpleEscape(str),"',{layout:'", VorplePositionName(pos), "'})"));
-	}
-	VorpleInsertNotification(str);
-];
 
-[ VorpleAlert str ;
-	VorpleExecuteJavaScriptCommand(BuildCommand("vorple.notify.alert('", VorpleEscape(str), "')"));
-	VorpleInsertNotification(str);
-];
-
-[ VorpleHideNotifications ;
-	VorpleExecuteJavaScriptCommand("vorple.notify.closeAll()");
-];
-
-[ VorpleDefaultNotifPosition pos;
-	VorpleExecuteJavaScriptCommand(BuildCommand("vorple.notify.defaults.layout='", VorplePositionName(pos), "'"));
-];
-
-
-
-! Implementation + Fallback for the Z-machine
+! TODO: does this code work for glulx?! (-->i et tout...)
 
 [ VorpleInsertNotification str         i ;
 	if (Vorple_notifarraysinit == 0) {
@@ -110,7 +92,7 @@ has scenery concealed;
 		Vorple_notifarraysinit=1;
 	}
 
-	if (IsVorpleSupported() == 0) {
+	if (isVorpleSupported() == 0) {
 		style underline;
 		for (i=0: i<VORPLE_MAX_NUMBER_NOTIFS: i++) {
 			if ( displayednotifs-->i ~= 0) {
