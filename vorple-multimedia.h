@@ -166,7 +166,7 @@ Constant PLAYLIST_REPEAT_SHUFFLE = 3;
 ];
 
 [ VorpleIsAudioFilePlaying file ;
-    VorpleExecuteJavaScriptCommand(BuildCommand("vorple.audio.isElementPlaying('.vorple-audio[src=vorple.options.resource_paths.audio+@@92'/", VorpleEscape(file), "@@92']')"));
+    VorpleExecuteJavaScriptCommand(BuildCommand("vorple.audio.isElementPlaying('.vorple-audio[src=@@92''+vorple.options.resource_paths.audio+'/", VorpleEscape(file), "@@92']')"));
     return VorpleWhatBooleanWasReturned();
 ];
 

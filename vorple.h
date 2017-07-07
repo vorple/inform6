@@ -127,7 +127,7 @@ Array mybuffer -> BUFLEN+4;
 Array mybuffer2 -> BUFLEN+4;
 Array gg_result --> 2;
 
-[ do_vorple_handshake  exists str len;
+[ do_vorple_handshake  exists str len       ix;
     fref_handshake = make_fref(HANDSHAKE_FILE);
     exists = glk($0067, fref_handshake); ! fileref_does_file_exist
     if( ~~exists ) rfalse;	   ! handshake file doesn't exist, not a Vorple interpreter
@@ -144,7 +144,12 @@ Array gg_result --> 2;
     ! the interpreter now writes "Callay!" to the file.
     str = open_file(fref_handshake, HANDSHAKE_FILE, filemode_Read);
     len = glk($0092, str, mybuffer, BUFLEN);    ! get_buffer_stream
-    if( ~~compare_string(mybuffer, len, "Callay!") ) rfalse;  ! wrong response from the interpreter
+    ! compare_string, but with a small twist (get_buffer_stream starts writing at 0, not at WORDSIZE)
+    ("Callay!").print_to_array(mybuffer2, BUFLEN);
+    if (len ~= 7) rfalse;   ! wrong response from the interpreter
+    for (ix=0 : ix<len : ix++) {
+       if (mybuffer->ix ~= mybuffer2->(WORDSIZE+ix)) rfalse;
+    }
     glk($0044, str, gg_result); ! stream_close
     rtrue;  ! everything passed, it's a Vorple interpreter
 ];
@@ -204,7 +209,7 @@ Array gg_result --> 2;
         if (len == BUFLEN) VorpleThrowRuntimeError("compare_string: string number 2 too long; please increase BUFLEN");
         if (len ~= blen) rfalse;
         for (ix=0 : ix<len : ix++) {
-            if (buf->ix ~= mybuffer2->(WORDSIZE+ix)) rfalse;
+            if (buf->(WORDSIZE+ix) ~= mybuffer2->(WORDSIZE+ix)) rfalse;
         }
     }
 ];
@@ -493,11 +498,12 @@ Array returnedValuebuffer buffer BUFLEN+4;
     return VorpleConvertTextIntoNumber(txt);
 ];
 
-[ VorpleWhatBooleanWasReturned   txt ;
+[ VorpleWhatBooleanWasReturned   txt type ;
     if (isVorpleSupported() == false) { return false;}
     txt = VorpleWhatTextWasReturned();
-    if (compare_string(VorpleWhatType(txt), 11, "truth state")) {
-        VorpleThrowRuntimeError(BuildCommand("Trying to convert return value of type ", VorpleWhatType(txt), " into a number"));
+    type = VorpleWhatType(txt);
+    if (compare_string(type, 11, "truth state") == false) {
+        VorpleThrowRuntimeError(BuildCommand("Trying to convert return value of type ", type, " into a boolean"));
         return false;
     }
     return compare_string(VorpleWhatWasReturned(), VorpleWhatWasReturned()-->0, "true");
