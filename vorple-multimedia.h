@@ -78,11 +78,14 @@ Constant LOOP_MUSIC = 1;
 [ VorplePlaySoundEffect file loop;
     if (loop == LOOP_SOUND) {
         ! @@92 = backslash
-        VorpleExecuteJavaScriptCommand(BuildCommand("$('<audio class=@@92'vorple-audio vorple-sound@@92' src=vorple.options.resource_paths.audio+@@92'/", VorpleEscape(file), "@@92' autoplay loop>').appendTo('body')"));
+         VorpleExecuteJavaScriptCommand(BuildCommand("$('<audio class=@@92'vorple-audio vorple-sound@@92' src='+vorple.options.resource_paths.audio+'/", VorpleEscape(file), " autoplay loop>').appendTo('body')"));
     } else {
-        VorpleExecuteJavaScriptCommand(BuildCommand("$('<audio class=@@92'vorple-audio vorple-sound@@92' src=vorple.options.resource_paths.audio+@@92'/", VorpleEscape(file), "@@92' autoplay>').appendTo('body')"));
+         VorpleExecuteJavaScriptCommand(BuildCommand("$('<audio class=@@92'vorple-audio vorple-sound@@92' src='+vorple.options.resource_paths.audio+'/", VorpleEscape(file), " autoplay>').appendTo('body')"));
     }
 ];
+
+
+
 
 [ VorplePlayMusic file loop;
     if (loop == LOOP_MUSIC) {
