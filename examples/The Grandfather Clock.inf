@@ -42,7 +42,7 @@ has ;
     } else { print "March 9, 2017"; }   ! just some random date for non-Vorple interpreters
 ];
 
-[ SynchronizedTime realtime;
+[ SynchronizedTime realtime         t ;
     ! Synchronize clocks
     if (isVorpleSupported()) {
         ! we can't set the time directly so we have to calculate the time difference between the story time and the real time in minutes and increment the story time by that amount.
@@ -51,5 +51,6 @@ has ;
         SetTime(realtime);
     }
     ! Display time of day
-    print the_time/60; print ":"; print the_time-(the_time/60)*60;
+    print the_time/60; print ":";
+    t=the_time-(the_time/60)*60; if (t < 10) { print "0"; } print t;
 ];
