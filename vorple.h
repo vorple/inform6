@@ -612,6 +612,7 @@ Array returnedValuebuffer buffer BUFLEN+4;
 
 ! This is an internal helper variable that shouldn't be changed manually (it will get overwritten).
 ! To change the prompt, change the usual "Prompt" action (via the LibraryMessages object for instance).
+! However you can only set it to a string (any command such as a tooltip or a hyperlink will get ignored).
 Array Vorple_prompt buffer BUFLEN;
 
 [ L__M act n x1 s;
