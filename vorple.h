@@ -674,7 +674,7 @@ Array Vorple_prompt buffer BUFLEN;
 [ LookRoutine ;
 	! each_turn is executed at the end of every turn, so we need a way to execute it at the very beginning too
 	! cf Roger Firth's "Why don't my daemons run at the start of the game"
-	#Ifdef VORPLE_NOTIFICATIONS_LIBRARY;
+	#Ifdef VORPLE_NOTIFICATIONS;
 	if (turns == 0) { VorpleNotificationsFallback(); }
 	#Endif;
 	MyLookRoutine();

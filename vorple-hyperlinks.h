@@ -1,5 +1,9 @@
-Include "vorple.h";
+#Ifndef VORPLE_HYPERLINKS;
+
 System_file;
+Constant VORPLE_HYPERLINKS;
+
+Include "vorple.h";
 
 ! Hyperlinks that either open a web site, execute a parser command or evaluate JavaScript code.
 
@@ -71,3 +75,5 @@ Constant DONT_SHOW_COMMAND = 1;
 [ VorpleLinkDisableAll ;
         VorpleExecuteJavaScriptCommand("$('a.vorple-link').replaceWith(function() { return $('<span>').addClass('vorple-disabled-link').html($(this).html())}).length");
 ];
+
+#Endif;

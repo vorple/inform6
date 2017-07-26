@@ -1,5 +1,9 @@
-Include "vorple.h";
+#Ifndef VORPLE_ELEMENT_MANIPULATION;
+
 System_file;
+Constant VORPLE_ELEMENT_MANIPULATION;
+
+Include "vorple.h";
 
 ! Adding, removing, hiding, moving and other basic manipulation of HTML document elements.
 
@@ -115,3 +119,6 @@ System_file;
 [ VorpleRenameAllElements oldname newname ;
     VorpleExecuteJavaScriptCommand(BuildCommand("$('.", oldname, "').removeClass('", oldname, "').addClass('", newname, "')"));
 ];
+
+
+#Endif;

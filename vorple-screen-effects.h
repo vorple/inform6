@@ -1,5 +1,9 @@
-Include "vorple.h";
+#Ifndef VORPLE_SCREEN_EFFECTS;
+
 System_file;
+Constant VORPLE_SCREEN_EFFECTS;
+
+Include "vorple.h";
 
 ! Vorple equivalent of Basic Screen Effects by Emily Short. Waiting for a keypress, clearing the screen, aligning, styling and coloring text.
 
@@ -333,3 +337,6 @@ Constant STYLE_LIGHT_MAGENTA_BACKGROUND = 46;
     }
     VorpleCloseHTMLTag();
 ];
+
+
+#Endif;

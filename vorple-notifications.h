@@ -1,7 +1,10 @@
-Include "vorple.h";
-System_file;
+#Ifndef VORPLE_NOTIFICATIONS;
 
-Constant VORPLE_NOTIFICATIONS_LIBRARY;	! to let vorple know this is included
+System_file;
+Constant VORPLE_NOTIFICATIONS;	! to let vorple know this is included
+
+Include "vorple.h";
+
 
 ! "Notifications that display a short message on the screen and disappear after a few seconds."
 
@@ -107,3 +110,5 @@ has scenery concealed;
 		displayednotifs-->i = 0;
 	}
 ];
+
+#Endif;

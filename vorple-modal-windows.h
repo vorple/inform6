@@ -1,5 +1,9 @@
-Include "vorple.h";
+#Ifndef VORPLE_MODAL_WINDOWS;
+
 System_file;
+Constant VORPLE_MODAL_WINDOWS;
+
+Include "vorple.h";
 
 ! Modal windows are dialog prompts or other information windows that pop up on top of the play area and require user action to dismiss.
 
@@ -18,3 +22,5 @@ System_file;
 [ VorpleCloseModalWindow ;
     VorpleExecuteJavaScriptCommand("vex.closeAll()");
 ];
+
+#Endif;

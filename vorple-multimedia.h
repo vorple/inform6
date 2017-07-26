@@ -1,5 +1,9 @@
-Include "vorple.h";
+#Ifndef VORPLE_MULTIMEDIA;
+
 System_file;
+Constant VORPLE_MULTIMEDIA;
+
+Include "vorple.h";
 
 ! Displaying images and playing sounds and music.
 
@@ -175,3 +179,5 @@ Constant PLAYLIST_REPEAT_SHUFFLE = 3;
     return VorpleWhatTextWasReturned();
 ];
 
+
+#Endif;

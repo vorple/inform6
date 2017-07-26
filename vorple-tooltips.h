@@ -1,4 +1,7 @@
+#Ifndef VORPLE_TOOLTIPS;
+
 System_file;
+Constant VORPLE_TOOLTIPS;
 
 Include "vorple.h";
 
@@ -134,3 +137,5 @@ Global TOOLTIP_DURATION = 7;
             VorpleExecuteJavaScriptCommand(BuildCommand("clearTimeout(_v_tooltip_timer);_v_tooltip_timer=setTimeout(function() {$.powerTip.hide()}, ", IntToString(delay_milli), ")"));
         }
 ];
+
+#Endif;

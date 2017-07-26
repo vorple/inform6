@@ -1,5 +1,9 @@
-Include "vorple.h";
+#Ifndef VORPLE_COMMAND_PROMPT_CONTROL;
+
 System_file;
+Constant VORPLE_COMMAND_PROMPT_CONTROL;
+
+Include "vorple.h";
 
 ! Changing the style and contents of the command prompt and manipulating the command history.
 
@@ -70,3 +74,5 @@ Constant HIDE_QUEUED_COMMAND = 1;
 [ VorpleShowPrompt ;
     VorpleUnhidePrompt();
 ];
+
+#Endif;
