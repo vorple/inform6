@@ -12,6 +12,8 @@ Include "vorple.h";
 ! Images
 
 [ VorpleImageInElement file desc classes      id ;
+        if (desc == 0) { desc = ""; }
+        if (classes == 0) { classes = ""; }
         if (isVorpleSupported()) {
             id = UniqueIdentifier();
             VorplePlaceDivElement(BuildCommand(id, " vorple-image ", classes), "");
@@ -27,7 +29,7 @@ Include "vorple.h";
             bp_output_stream(-3);
             VorpleExecuteJavaScriptCommand(hugehugestr);
         } else {
-            if (desc ~= 0) { print (string) desc; }
+            print (string) desc;
         }
 ];
 
@@ -38,6 +40,7 @@ Constant IMAGE_LEFT_FLOATING = 4;
 Constant IMAGE_RIGHT_FLOATING = 5;
 
 [ VorpleImage file desc alignment classes ;
+        if (desc == 0) { desc = ""; }
         if (classes == 0) { classes = ""; }
         if (classes == "") {
             switch(alignment) {
