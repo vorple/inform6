@@ -27,7 +27,7 @@ Include "vorple.h";
             bp_output_stream(-3);
             VorpleExecuteJavaScriptCommand(hugehugestr);
         } else {
-            print (string) desc;
+            if (desc ~= 0) { print (string) desc; }
         }
 ];
 
