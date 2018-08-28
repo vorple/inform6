@@ -91,8 +91,17 @@ Global fref_js_return;
 
 Global VorpleCommunicationDone = 0;
 
+Constant BUFLEN = 500;  ! used for most arrays
+Array current_prompt buffer (BUFLEN-1);
+
 [ StartVorpleStorySub ;
+    ! set prefix
     VorpleExecuteJavaScriptCommand("vorple.prompt.setPrefix('>')");
+    bp_output_stream(3, current_prompt, BUFLEN-1);
+      print ">";
+    bp_output_stream(-3);
+    
+    
     VorpleCommunicationDone = true;
 ];
 
@@ -119,7 +128,6 @@ Verb meta '__start_story'
 !Constant filemode_ReadWrite = 3; 
 
 ! TODO: this is used e.g. with VorpleExecuteJavaScriptCommand is called with just a string ; should we increase that just in case (but then it costs more memory)?
-Constant BUFLEN = 500;
 Constant HANDSHAKE_FILE = "VpHndshk";
 Constant JS_EVAL_FILE = "VpJSEval";
 
@@ -195,23 +203,31 @@ Array gg_result --> 2;
 ];
 
 [ compare_string buf blen val   len ix;
+
     if (buf ofclass String) {
         blen = buf.print_to_array(mybuffer, BUFLEN);
-        if (blen == BUFLEN) VorpleThrowRuntimeError("compare_string: string number 1 too long; please increase BUFLEN");
-        len = val.print_to_array(mybuffer2, BUFLEN);
-        if (len == BUFLEN) VorpleThrowRuntimeError("compare_string: string number 2 too long; please increase BUFLEN");
-        if (len ~= blen) rfalse;
-        for (ix=0 : ix<len : ix++) {
-            if (mybuffer->(WORDSIZE+ix) ~= mybuffer2->(WORDSIZE+ix)) rfalse;
-        }
     } else {
-        len = val.print_to_array(mybuffer2, BUFLEN);
-        if (len == BUFLEN) VorpleThrowRuntimeError("compare_string: string number 2 too long; please increase BUFLEN");
-        if (len ~= blen) rfalse;
-        for (ix=0 : ix<len : ix++) {
-            if (buf->(WORDSIZE+ix) ~= mybuffer2->(WORDSIZE+ix)) rfalse;
-        }
+        bp_output_stream(3, mybuffer, BUFLEN);
+        print (PrintStringOrArray) buf;
+        bp_output_stream(-3);
+        blen = buf-->0;
     }
+    if (blen == BUFLEN) VorpleThrowRuntimeError("compare_string: string number 1 too long; please increase BUFLEN");
+    
+    if (val ofclass String) {
+        len = val.print_to_array(mybuffer2, BUFLEN);
+    } else {
+        bp_output_stream(3, mybuffer2, BUFLEN);
+        print (PrintStringOrArray) val;
+        bp_output_stream(-3);
+        len = val-->0;
+    }
+    if (len == BUFLEN) VorpleThrowRuntimeError("compare_string: string number 2 too long; please increase BUFLEN");
+    if (len ~= blen) rfalse;
+    for (ix=0 : ix<len : ix++) {
+        if (mybuffer->(WORDSIZE+ix) ~= mybuffer2->(WORDSIZE+ix)) rfalse;
+    }
+    return true;
 ];
 
 [ Vp_IsJs ;
@@ -611,20 +627,32 @@ Array returnedValuebuffer buffer BUFLEN+4;
 ! Prompt
 
 ! This is an internal helper variable that shouldn't be changed manually (it will get overwritten).
-! To change the prompt, change the usual "Prompt" action (via the LibraryMessages object for instance).
-! However you can only set it to a string (any command such as a tooltip or a hyperlink will get ignored).
-Array Vorple_prompt buffer BUFLEN;
+! To change the prompt, two possibilities:
+!       - change "Prompt" in your grammar file
+!       - use the stub MyVorplePrompt() and return true when you're done
+! Do not use LibraryMessages with Prompt (the Vorple prompt won't be changed).
+! You can only set the prompt to a string (any command such as a tooltip or a hyperlink will get ignored).
+Array Vorple_prompt buffer (BUFLEN-1);
+#Stub MyVorplePrompt 0;
 
-[ L__M act n x1 s;
+[ L__M act n x1 s  ;
     ! Print the prompt in Vorple
     if (act == ##Prompt) {
         if (isVorpleSupported()) {
-            !@output_stream 3 Vorple_prompt;
-            bp_output_stream(3, Vorple_prompt, BUFLEN);
-            OldLM(##Prompt);
-            !@output_stream -3;
+            bp_output_stream(3, Vorple_prompt, BUFLEN-1);
+            ! if you haven't defined any special prompt, Vorple will take the usual
+            if (MyVorplePrompt()==false) {OldLM(##Prompt);}
             bp_output_stream(-3);
-            VorpleExecuteJavaScriptCommand(BuildCommand("vorple.prompt.setPrefix('", VorpleEscape(Vorple_prompt), "')"));
+            
+            ! if the prompt has changed since last turn...
+            if (compare_string(Vorple_prompt, BUFLEN-1, current_prompt) == false) {
+                ! set it
+                VorpleExecuteJavaScriptCommand(BuildCommand("vorple.prompt.setPrefix('", VorpleEscape(Vorple_prompt), "')"));
+                ! change the current_prompt variable
+                bp_output_stream(3, current_prompt, BUFLEN-1);
+                print (PrintStringOrArray) Vorple_prompt;
+                bp_output_stream(-3);
+            }
             return;
         }
     }
