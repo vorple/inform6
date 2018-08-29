@@ -333,8 +333,27 @@ Constant NEW_LINE_CHAR = 10;     ! '\n'
 #Endif;
 
 
+! Transform a char into a Unicode value
+[ Unicode x      y;
+  y = (x & $7f00) / $100;
+  if (x<0) y = y + $80;
+  x = x & $ff;
+  print (hexdigit) y/$10, (hexdigit) y,
+        (hexdigit) x/$10, (hexdigit) x;
+];
 
-[ VorpleEscapeLineBreaks str lb    i;
+[ hexdigit x;
+  x = x % $10;
+  switch (x) {
+      0 to 9: print x;
+      10: print "a";  11: print "b";  12: print "c";
+      13: print "d";  14: print "e";  15: print "f";
+  }
+];
+
+
+
+[ VorpleEscapeLineBreaks str lb    i c;
 
 	!@output_stream 3 toescape;
         bp_output_stream(3, toescape, 500);
@@ -353,12 +372,20 @@ Constant NEW_LINE_CHAR = 10;     ! '\n'
 	for (i=0: i<toescape-->0: i++) {
 		if ( toescape->(WORDSIZE+i) == 39 || toescape->(WORDSIZE+i) == 92) { ! single quote or \
 			print (char) 92; ! \
+			print (char) toescape->(WORDSIZE+i);
+                        continue;
 		}
 		if ( toescape->(WORDSIZE+i) == NEW_LINE_CHAR) { ! line break
 			print (PrintStringOrArray) temp;
 			continue;
 		}
-		print (char) toescape->(WORDSIZE+i);
+		c =  toescape->(WORDSIZE+i);
+                if (c < 128) {
+                    print (char) c;
+                } else {
+                    print (char) 92; print "u";  ! \u
+                    Unicode(c);
+                }
 	}
 	!@output_stream -3;
         bp_output_stream(-3);
