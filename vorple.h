@@ -370,7 +370,8 @@ Constant NEW_LINE_CHAR = 10;     ! '\n'
 	!@output_stream 3 safe;
         bp_output_stream(3, safe, 500);
 	for (i=0: i<toescape-->0: i++) {
-		if ( toescape->(WORDSIZE+i) == 39 || toescape->(WORDSIZE+i) == 92) { ! single quote or \
+		if ( toescape->(WORDSIZE+i) == 39 || toescape->(WORDSIZE+i) == 92 || toescape->(WORDSIZE+i) == 34) {
+                    ! single quote or \ or double quote
 			print (char) 92; ! \
 			print (char) toescape->(WORDSIZE+i);
                         continue;
