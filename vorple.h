@@ -889,7 +889,7 @@ Array Vorple_prompt buffer (BUFLEN-1);
     ! Print the prompt in Vorple
     if (act == ##Prompt) {
         if (isVorpleSupported()) {
-			if (~~MyVorplePrompt()) new_line;
+			new_line;
             bp_output_stream(3, Vorple_prompt, BUFLEN-1);
             ! if you haven't defined any special prompt, Vorple will use ">"
 			if (~~MyVorplePrompt()) print ">";
@@ -941,8 +941,8 @@ Array Vorple_prompt buffer (BUFLEN-1);
         print "Vorple version ";
  		PrintStringOrArray(VorpleWhatTextWasReturned());
 		print " preview";
+		new_line;
     }
-	new_line;
 	return true;
 ];
 
