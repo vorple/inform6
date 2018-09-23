@@ -2,6 +2,17 @@ See also the changelog of the main JavaScript library
 (https://github.com/vorple/vorple/CHANGES).
 
 
+Proposed changes to an eventual release 3.1
+===========================================
+
+ -	Added the constant VORPLE_NO_REPLACES to be able to avoid replacements of
+	routines of the Inform library. Thus, the author can avoid potential
+	conflicts in case his own source code also replaces these routines.
+ -	Removed dependence on Roger Firth's JustEnoughGlulx extension -- the
+	'bp_output_stream()' routine is now implemented in vorple.h. This avoids
+	potential conflicts in case the author uses Glulx entry points.
+ -	Uniformed (to a large extent) code tabulation criteria.
+
 Release 3.0
 ===========
 
