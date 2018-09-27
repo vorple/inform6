@@ -889,10 +889,10 @@ Array Vorple_prompt buffer (BUFLEN-1);
     ! Print the prompt in Vorple
     if (act == ##Prompt) {
         if (isVorpleSupported()) {
-			new_line;
             bp_output_stream(3, Vorple_prompt, BUFLEN-1);
-            ! if you haven't defined any special prompt, Vorple will use ">"
-			if (~~MyVorplePrompt()) print ">";
+            ! if you haven't used the stub, Vorple will go look in "Prompt" in
+            ! the grammar file. Either way, don't forget to start with a newline!
+                if (~~MyVorplePrompt()) OldLM(##Prompt);
             bp_output_stream(-3);
 
             ! if the prompt has changed since last turn...
