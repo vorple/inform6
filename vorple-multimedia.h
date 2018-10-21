@@ -30,6 +30,7 @@ Include "vorple.h";
             VorpleExecuteJavaScriptCommand(hugehugestr);
         } else {
             print (string) desc;
+            print "^";
         }
 ];
 
