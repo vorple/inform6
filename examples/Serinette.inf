@@ -36,10 +36,10 @@ has light;
 ];
 
 Object serinette "serinette" drawingroom
-	with description [; VorpleImage("serinette.jpg", "A music box", IMAGE_CENTERED); "There's a winding key behind the box."; ],
+ 	with description [; VorpleImage("serinette.jpg", "A beautiful music box.", IMAGE_CENTERED); "There's a winding key behind the box."; ],
 	describe "A beautiful music box sits on a table.",
 	name 'serinette' 'music' 'box',
-	before [; Wind: give self wound; VorplePlaySoundEffect("winding.mp3"); if (self has open) {PlayTune();} "You turn the winding key until it turns no more.";
+	before [; Wind: if (self has open) {print "(first closing the serinette)^"; VorpleStopMusic(); give self ~open;} give self wound; VorplePlaySoundEffect("winding.mp3"); "You turn the winding key until it turns no more.";
 		Receive: "It's not the kind of box that can contain anything other than its own mechanism.";
 		Open: if (self has wound) {PlayTune(); } else {"Nothing happens. Looks like it must be wound first.";}
 		Close: VorpleStopMusic();
