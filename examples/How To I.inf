@@ -58,7 +58,7 @@ Extend 'take' first
 
 
 [ HelpfulExamineSub ;
-	if (verb_word ~= 'x//') { VorpleNotification("Tip: You can abbreviate EXAMINE to just X"); }
+	if (verb_word ~= 'x//') { VorpleNotification("You can abbreviate EXAMINE to just X", NOTIFICATION_INFO, "Tip"); }
 	<<Examine noun>>;
 ];
 

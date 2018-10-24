@@ -32,6 +32,7 @@ Global NOTIFICATION_DURATION = 7;
         if (duration == 0) { duration = NOTIFICATION_DURATION; }
         if (title == 0) {
             VorpleExecuteJavaScriptCommand(BuildCommand("toastr.", typestr, "('", VorpleEscape(text), "',{timeOut: ", IntToString(duration), "000, escapeHtml: true})"));
+            VorpleInsertNotification(text);
         } else {
             ! we have two strings to escape, but the way the utils work it's easier to do it this way
             !@output_stream 3 hugehugestr;
@@ -48,36 +49,44 @@ Global NOTIFICATION_DURATION = 7;
             !@output_stream -3;
             bp_output_stream(-3);
             VorpleExecuteJavaScriptCommand(hugehugestr);
+            ! Fallback if vorple isn't supported
+            VorpleInsertNotification(BuildCommand(title, " - ", text));
         }
-        VorpleInsertNotification(text);
 ];
 
 
 !=============================================
 ! The same behavior, but for interpreters for which Vorple isn't supported
 
-Constant VORPLE_MAX_NUMBER_NOTIFS = 16;
+Constant LEN_NOTIFICATIONS_FALLBACK = 2000;
+Array notifs_array buffer LEN_NOTIFICATIONS_FALLBACK;
+Array notifs_copy buffer LEN_NOTIFICATIONS_FALLBACK;
+Global notifs=0;
+Global Vorple_notifarraysinit=0;
 
-Array displayednotifs table VORPLE_MAX_NUMBER_NOTIFS;
-Global Vorple_notifarraysinit = 0;
-
-
-! TODO: does this code work for glulx?! (-->i et tout...)
-
-[ VorpleInsertNotification str         i ;
-	if (Vorple_notifarraysinit == 0) {
-		! need to initialise the array first
-		for (i=0: i<VORPLE_MAX_NUMBER_NOTIFS: i++) {
-				displayednotifs-->i = 0;
-		}
-		Vorple_notifarraysinit=1;
-	}
-
-	for (i=0: i<VORPLE_MAX_NUMBER_NOTIFS: i++) {
-		if ( displayednotifs-->i == 0) { break;}
-	}
-	if (i >= VORPLE_MAX_NUMBER_NOTIFS) { style bold; print "Vorple error: notification table too small.^"; style roman; }
-	displayednotifs-->i = str;
+[ VorpleInsertNotification str ;
+    if (Vorple_notifarraysinit==0) {
+        bp_output_stream(3, notifs_array, LEN_NOTIFICATIONS_FALLBACK);
+        print "";
+        bp_output_stream(-3);
+        Vorple_notifarraysinit=1;
+    }
+    ! TODO: is there really nothing better??
+    bp_output_stream(3, notifs_copy, LEN_NOTIFICATIONS_FALLBACK);
+    PrintStringOrArray(notifs_array);
+    bp_output_stream(-3);
+    bp_output_stream(3, notifs_array, LEN_NOTIFICATIONS_FALLBACK);
+    PrintStringOrArray(notifs_copy);
+    print "^[";
+    PrintStringOrArray(str);
+    print "]";
+    bp_output_stream(-3);
+    if (notifs_array->0 >= LEN_NOTIFICATIONS_FALLBACK-1) {
+        style bold;
+        print "Vorple error: notification table too small.^";
+        style roman;
+    }
+    notifs++;
 ];
 
 
@@ -87,28 +96,15 @@ Object vorple_notif
 has scenery concealed;
 
 [ VorpleNotificationsFallback     i ;
-	if (Vorple_notifarraysinit == 0) {
-		! need to initialise the array first
-		for (i=0: i<VORPLE_MAX_NUMBER_NOTIFS: i++) {
-				displayednotifs-->i = 0;
-		}
-		Vorple_notifarraysinit=1;
-	}
-
-	if (isVorpleSupported() == 0) {
+	if (isVorpleSupported() == 0 && notifs > 0) {
 		style underline;
-		for (i=0: i<VORPLE_MAX_NUMBER_NOTIFS: i++) {
-			if ( displayednotifs-->i ~= 0) {
-				print "^[";
-				print (PrintStringOrArray) displayednotifs-->i;
-				print "]";
-			}
-		}
+                PrintStringOrArray(notifs_array);
 		style roman;
 	}
-	for (i=0: i<VORPLE_MAX_NUMBER_NOTIFS: i++) {
-		displayednotifs-->i = 0;
-	}
+        notifs = 0;
+	bp_output_stream(3, notifs_array, LEN_NOTIFICATIONS_FALLBACK);
+        print "";
+        bp_output_stream(-3);
 ];
 
 #Endif;

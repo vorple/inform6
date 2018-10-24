@@ -64,11 +64,13 @@ Multimedia
    already playing at that moment, the track will not be stopped and the
    playlist will now continue from that place instead of from the beginning,
    unless the "always from the start" modifier is provided.
-   
-
-Other
-------
  - Fixed the Serinette example.
+
+
+Notifications
+------
+
+ - Fallback in non-Vorple interpreters now includes the notification title (#8)
  
  
  
