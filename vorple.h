@@ -201,7 +201,7 @@ Global fref_js_return;
 	if (isVorpleSupported()) {
 	    ! execute the "Vorple interface setup rules"
 	    VorpleExecuteJavaScriptCommand(
-			"window._vorpleSetupRulebookHasRun||false");
+			"return window._vorpleSetupRulebookHasRun||false");
 	    if (~~VorpleWhatBooleanWasReturned()) {
 	        ! go through the rules of vorple interface setup
 	        objectloop(r in VorpleInterfaceSetup) r.description();
@@ -549,6 +549,17 @@ Constant NEW_LINE_CHAR = 10; ! '\n'
 !========================================
 ! JS Code execution
 
+! Note: if you wish to know and use the result of a JS command,
+!       the command must use the keyword "return". Use then
+!       "VorpleWhatWasReturned" to get the answer as a string,
+!       or "VorpleWhatBooleanWasReturned", "VorpleWhatTextWasReturned"
+!       or "VorpleWhatNumberWasReturned" if you're sure of the type
+!       of value this was ("VorpleWhatType" will tell you).
+!       Example:
+!         VorpleExecuteJavaScriptCommand("return 'foo'");
+!         VorpleExecuteJavaScriptCommand("'bar'");
+!         print VorpleWhatWasReturned();   ! prints "foo"
+
 [ VorpleExecuteJavaScriptCommand cmd    str ;
     if (isVorpleSupported()) {
         fref_js_eval = make_fref(JS_EVAL_FILE);
@@ -849,7 +860,7 @@ Array returnedValuebuffer buffer BUFLEN+4;
 
 [ VorpleCountElements elt ;
     VorpleExecuteJavaScriptCommand(
-		BuildCommand("$('.'+'", elt, "'.split(' ').join('.')).length"));
+		BuildCommand("return $('.'+'", elt, "'.split(' ').join('.')).length"));
     return VorpleWhatNumberWasReturned();
 ];
 
@@ -937,7 +948,7 @@ Array Vorple_prompt buffer (BUFLEN-1);
 
 [ VorpleAppendToBanner ;
     if (isVorpleSupported()) {
-        VorpleExecuteJavaScriptCommand("vorple.version");
+        VorpleExecuteJavaScriptCommand("return vorple.version");
         print "Vorple version ";
  		PrintStringOrArray(VorpleWhatTextWasReturned());
 		new_line;

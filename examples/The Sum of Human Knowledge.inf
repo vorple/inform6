@@ -43,7 +43,7 @@ Array myTopic buffer 1000;
 	! send it
 	if (isVorpleSupported()){
 		VorplePlaceBlockLevelElement("dictionary-entry", "");
-		VorpleExecuteJavaScriptCommand( BuildCommand("wikipedia_query('", VorpleEscape(myTopic), "')"));
+		VorpleExecuteJavaScriptCommand( BuildCommand("return wikipedia_query('", VorpleEscape(myTopic), "')"));
 		! run paragraph on ?
 		VorpleBlockUserInterface();
 	} else {

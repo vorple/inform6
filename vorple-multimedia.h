@@ -155,31 +155,31 @@ Constant PLAYLIST_REPEAT_SHUFFLE = 3;
 ];
 
 [ VorpleClearPlaylist ;
-    VorpleExecuteJavaScriptCommand("vorple.audio.clearPlaylist()");
+    VorpleExecuteJavaScriptCommand("return vorple.audio.clearPlaylist()");
 ];
 
 [ VorpleIsMusicPlaying ;
-    VorpleExecuteJavaScriptCommand("vorple.audio.isMusicPlaying()");
+    VorpleExecuteJavaScriptCommand("return vorple.audio.isMusicPlaying()");
     return VorpleWhatBooleanWasReturned();
 ];
 
 [ VorpleIsASoundEffectPlaying ;
-    VorpleExecuteJavaScriptCommand("vorple.audio.isEffectPlaying()");
+    VorpleExecuteJavaScriptCommand("return vorple.audio.isEffectPlaying()");
     return VorpleWhatBooleanWasReturned();
 ];
 
 [ VorpleIsAudioPlaying ;
-    VorpleExecuteJavaScriptCommand("vorple.audio.isAudioPlaying()");
+    VorpleExecuteJavaScriptCommand("return vorple.audio.isAudioPlaying()");
     return VorpleWhatBooleanWasReturned();
 ];
 
 [ VorpleIsAudioFilePlaying file ;
-    VorpleExecuteJavaScriptCommand(BuildCommand("vorple.audio.isElementPlaying('.vorple-audio[src=@@92''+vorple.options.resource_paths.audio+'/", VorpleEscape(file), "@@92']')"));
+    VorpleExecuteJavaScriptCommand(BuildCommand("return vorple.audio.isElementPlaying('.vorple-audio[src=@@92''+vorple.options.resource_paths.audio+'/", VorpleEscape(file), "@@92']')"));
     return VorpleWhatBooleanWasReturned();
 ];
 
 [ VorpleGetMusicFilePlaying ;
-    VorpleExecuteJavaScriptCommand("vorple.audio.currentMusicPlaying()||''");
+    VorpleExecuteJavaScriptCommand("return vorple.audio.currentMusicPlaying()||''");
     return VorpleWhatTextWasReturned();
 ];
 
