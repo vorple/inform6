@@ -940,7 +940,6 @@ Array Vorple_prompt buffer (BUFLEN-1);
         VorpleExecuteJavaScriptCommand("vorple.version");
         print "Vorple version ";
  		PrintStringOrArray(VorpleWhatTextWasReturned());
-		print " preview";
 		new_line;
     }
 	return true;

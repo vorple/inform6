@@ -2,17 +2,62 @@ See also the changelog of the main JavaScript library
 (https://github.com/vorple/vorple/CHANGES).
 
 
-Proposed changes to an eventual release 3.1
+Release 3.1
 ===========================================
 
- -	Added the constant VORPLE_NO_REPLACES to be able to avoid replacements of
-	routines of the Inform library. Thus, the author can avoid potential
-	conflicts in case his own source code also replaces these routines.
- -	Removed dependence on Roger Firth's JustEnoughGlulx extension -- the
-	'bp_output_stream()' routine is now implemented in vorple.h. This avoids
-	potential conflicts in case the author uses Glulx entry points.
- -	Uniformed (to a large extent) code tabulation criteria.
 
+Vorple
+------
+
+ - Fixed the display bug for Unicode (non-ASCII) characters sent through
+   JavaScript; for instance the tooltips can now have accented characters in
+   them.
+ - Added the constant VORPLE_NO_REPLACES to be able to avoid replacements of
+   routines of the Inform library. Thus, the author can avoid potential
+   conflicts in case his own source code also replaces these routines.
+ - Removed dependence on Roger Firth's JustEnoughGlulx extension -- the
+   'bp_output_stream()' routine is now implemented in vorple.h. This avoids
+   potential conflicts in case the author uses Glulx entry points.
+ - Added a stub "MyVorplePrompt" to define a routine displaying the prompt,
+   instead of having to change directly the grammar file (which was the
+   only method that worked before).
+ - Refactored the compare_string function, which can now compare two arrays
+   when previously it required the second argument to be a string.
+ - VorpleEscape now (correctly) escapes double quotes too.
+ - Uniformed (to a large extent) code tabulation criteria.
+ - Fixed a bug with prompt handling - now the code checks if the prompt
+   has changed before updating the value, instead of overwriting at every
+   turn.
+
+
+Element manipulation
+------
+
+ - Moving elements is now working (and uses the right jQuery methods).
+
+ 
+Modal windows
+------
+
+ - Due to how the modal windows block Inform from continuing with the turn,
+   having an Inform phrase to close modals doesn't really have any practical use.
+   The VorpleCloseModalWindows function is therefore removed from the extension.
+ - Added the possibility to pause the game or not after displaying a modal
+   window.
+
+   
+Multimedia
+------
+ - Fixed a bug for the fallback to when trying to display an image with no
+   alternate description.
+   
+
+Other
+------
+ - Fixed the Serinette example.
+ 
+ 
+ 
 Release 3.0
 ===========
 
