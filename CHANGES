@@ -9,6 +9,12 @@ Release 3.1
 Vorple
 ------
 
+ - BREAKING CHANGE: Evaluated JavaScript code must now explicitly return a
+   value from the expression, otherwise no return value is available in
+   Inform. (Any time you used the VorpleWhatXXWasReturned routines, you need
+   to add 'return' in the JS command that was supposed to return your
+   valeu.) Previously the value of the last expression was automatically
+   returned. See the Vorple extension documentation for details.
  - Fixed the display bug for Unicode (non-ASCII) characters sent through
    JavaScript; for instance the tooltips can now have accented characters in
    them.
@@ -39,9 +45,10 @@ Element manipulation
 Modal windows
 ------
 
- - Due to how the modal windows block Inform from continuing with the turn,
-   having an Inform phrase to close modals doesn't really have any practical use.
-   The VorpleCloseModalWindows function is therefore removed from the extension.
+ - BREAKING CHANGE: Due to how the modal windows block Inform from continuing
+   with the turn, having an Inform function to close modals doesn't really have
+   any practical use. The VorpleCloseModalWindows function is therefore
+   removed from the extension.
  - Added the possibility to pause the game or not after displaying a modal
    window.
 
@@ -50,6 +57,13 @@ Multimedia
 ------
  - Fixed a bug for the fallback to when trying to display an image with no
    alternate description.
+ - Added an "always from the start" modifier to "start music" phrase, which
+   forces the file to start playing from the beginning even if the same track
+   is already playing.
+ - When starting a playlist, if a track that's present in the playlist is
+   already playing at that moment, the track will not be stopped and the
+   playlist will now continue from that place instead of from the beginning,
+   unless the "always from the start" modifier is provided.
    
 
 Other
