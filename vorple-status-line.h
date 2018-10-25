@@ -56,7 +56,7 @@ Array VorpleStatusLineMobile buffer LEN_STATUS;
 Constant VORPLE_USUAL_STATUS_LINE = 1;
 
 
-Object VorpleDrawStatusLine "" VorpleInterfaceConstruction
+Object VorpleDrawStatusLine "" VorpleInterfaceUpdate
     with description [ r ;
         VorpleConstructStatusLine();
         if (VORPLE_USUAL_STATUS_LINE == 1) {
@@ -133,7 +133,6 @@ Object VorpleDefaultStatusLine
     if (isVorpleSupported() && VorpleStatusLineSize > 0) {
         ! save the internal state of line breaks
         VorpleDrawStatusLine();
-        
         ! restore the internal state of line breaks
     }
 ];

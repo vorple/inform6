@@ -186,16 +186,16 @@ Object VorpleInterfaceSetup;
 	}
 ];
 
-! The vorple interface construction rulebook. If you want to include
+! The vorple interface update rulebook. If you want to include
 ! rules in that rulebook, declare an object in it and put your code
 ! in its description
-Object VorpleInterfaceConstruction;
+Object VorpleInterfaceUpdate;
 
-[ VorpleConstructTheInterface ;
+[ VorpleUpdateTheInterface ;
         ! TODO: is the test necessary?
         if (isVorpleSupported()) {
             ! go through the rules of vorple interface construction
-            objectloop (r in VorpleInterfaceConstruction) r.description();
+            objectloop (r in VorpleInterfaceUpdate) r.description();
         }
 ];
 
