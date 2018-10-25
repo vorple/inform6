@@ -59,11 +59,6 @@ Constant VORPLE_LIBRARY;
 
 Include "infglk.h";
 
-! This is a horribly hacky way to implement the vorple interface setup rules.
-! If you want to include more rules in that rulebook, declare an object in it
-! and put your code in the description
-
-Object VorpleInterfaceSetup;
 
 ! The following 'bp_output_stream()' routine is directly taken from
 ! JustEnoughGlulx.h by Roger Firth. (We do not include the complete extension
@@ -168,6 +163,45 @@ Global fref_js_eval;
 Global fref_js_return;
 Global fref_js_return_type;
 
+!============== Vorple Interface
+
+! The vorple interface setup rulebook. If you want to include
+! rules in that rulebook, declare an object in it and put your code
+! in its description
+Object VorpleInterfaceSetup;
+
+[ VorpleSetupTheInterface ;
+	! TODO - is the test for vorple support superflous here, since
+	! "VorpleExecuteJavaScriptCommand()" just doesn't do anything for normal
+	! terps?
+	if (isVorpleSupported()) {
+	    VorpleExecuteJavaScriptCommand(
+			"return window._vorpleSetupRulebookHasRun||false");
+	    if (~~VorpleWhatBooleanWasReturned()) {
+	        ! go through the rules of vorple interface setup
+	        objectloop(r in VorpleInterfaceSetup) r.description();
+	        VorpleExecuteJavaScriptCommand(
+				"window._vorpleSetupRulebookHasRun=true");
+	    }
+	}
+];
+
+! The vorple interface construction rulebook. If you want to include
+! rules in that rulebook, declare an object in it and put your code
+! in its description
+Object VorpleInterfaceConstruction;
+
+[ VorpleConstructTheInterface ;
+        ! TODO: is the test necessary?
+        if (isVorpleSupported()) {
+            ! go through the rules of vorple interface construction
+            objectloop (r in VorpleInterfaceConstruction) r.description();
+        }
+];
+
+!===============
+! Vorple Initialise
+
 ! You can use a 'VorpleStartup()' routine to do things while Vorple
 ! initialises. For instance, to execute commands before play begins
 #Stub VorpleStartup 0;
@@ -194,21 +228,9 @@ Global fref_js_return_type;
 		BuildCommand("document.title='", VorpleEscape(Story), "'"));
 
 	! vorple interface setup rules
-	! TODO - is the test for vorple support superflous here, since
-	! "VorpleExecuteJavaScriptCommand()" just doesn't do anything for normal
-	! terps?
-
-	if (isVorpleSupported()) {
-	    ! execute the "Vorple interface setup rules"
-	    VorpleExecuteJavaScriptCommand(
-			"return window._vorpleSetupRulebookHasRun||false");
-	    if (~~VorpleWhatBooleanWasReturned()) {
-	        ! go through the rules of vorple interface setup
-	        objectloop(r in VorpleInterfaceSetup) r.description();
-	        VorpleExecuteJavaScriptCommand(
-				"window._vorpleSetupRulebookHasRun=true");
-	    }
-	}
+        VorpleSetupTheInterface();
+        ! vorple interface construction rules
+        VorpleConstructTheInterface();
 ];
 
 Global VorpleCommunicationDone = 0;
@@ -847,8 +869,10 @@ Array Vorple_prompt buffer (BUFLEN-1);
 
 [ VorpleAppendToLM act n x1 s;
 	x1 = s; ! avoid compiler warning
-    ! Print the prompt in Vorple
     if (act == ##Prompt) {
+        ! This is also the moment we update the user interface
+        VorpleConstructTheInterface();
+        ! Now print the prompt in Vorple
         if (isVorpleSupported()) {
             bp_output_stream(3, Vorple_prompt, BUFLEN-1);
             ! if you haven't used the stub, Vorple will go look in "Prompt" in
