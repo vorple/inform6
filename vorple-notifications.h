@@ -95,7 +95,7 @@ Object vorple_notif
 	each_turn [; VorpleNotificationsFallback(); rtrue; ],
 has scenery concealed;
 
-[ VorpleNotificationsFallback     i ;
+[ VorpleNotificationsFallback  ;
 	if (isVorpleSupported() == 0 && notifs > 0) {
 		style underline;
                 PrintStringOrArray(notifs_array);

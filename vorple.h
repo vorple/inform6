@@ -170,7 +170,7 @@ Global fref_js_return_type;
 ! in its description
 Object VorpleInterfaceSetup;
 
-[ VorpleSetupTheInterface ;
+[ VorpleSetupTheInterface    r ;
 	! TODO - is the test for vorple support superflous here, since
 	! "VorpleExecuteJavaScriptCommand()" just doesn't do anything for normal
 	! terps?
@@ -191,7 +191,7 @@ Object VorpleInterfaceSetup;
 ! in its description
 Object VorpleInterfaceUpdate;
 
-[ VorpleUpdateTheInterface ;
+[ VorpleUpdateTheInterface      r ;
         ! TODO: is the test necessary?
         if (isVorpleSupported()) {
             ! go through the rules of vorple interface construction
@@ -206,7 +206,7 @@ Object VorpleInterfaceUpdate;
 ! initialises. For instance, to execute commands before play begins
 #Stub VorpleStartup 0;
 
-[ VorpleInitialise      r ;
+[ VorpleInitialise  ;
 	! creates references
 	! TODO - remove?
 	!fref_handshake = make_fref(HANDSHAKE_FILE);
