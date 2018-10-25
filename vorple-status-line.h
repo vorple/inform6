@@ -1,7 +1,7 @@
 #Ifndef VORPLE_STATUS_LINE;
 
 System_file;
-Constant VORPLE_HYPERLINKS;
+Constant VORPLE_STATUS_LINE;
 
 Include "vorple.h";
 Include "vorple-screen-effects.h";
@@ -17,8 +17,8 @@ Global VorpleStatusLineSize = 0;
 
 [ VorpleConstructStatusLine cols ;
     if (cols > 3 || cols < 0) {
-        VorpleRuntimeError("Vorple Status Line: status line must have exactly 1, 2 or 3 columns.");
-        return false
+        VorpleThrowRuntimeError("Vorple Status Line: status line must have exactly 1, 2 or 3 columns.");
+        return false;
     }
     VorpleStatusLineSize = cols;
     VorpleStatusLineRemove();
@@ -91,7 +91,8 @@ Object VorpleDefaultStatusLine
 
 
 ! Update the columns text using the usual DrawStatusLine code
-[ VorpleStatusLineUsualInfo ;
+[ VorpleStatusLineUsualInfo       width;
+    width = ScreenWidth();
     bp_output_stream(3, VorpleStatusLineLeftHand, LEN_STATUS);
     if (location == thedark) {
         print (name) location;
