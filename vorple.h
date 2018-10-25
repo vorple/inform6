@@ -166,6 +166,7 @@ Global vorple_support = 0;
 Global fref_handshake;
 Global fref_js_eval;
 Global fref_js_return;
+Global fref_js_return_type;
 
 ! You can use a 'VorpleStartup()' routine to do things while Vorple
 ! initialises. For instance, to execute commands before play begins
@@ -572,6 +573,7 @@ Constant NEW_LINE_CHAR = 10; ! '\n'
 ];
 
 Constant JS_RETURN_FILE = "VpJSRtrn";
+Constant JS_RETURN_TYPE_FILE = "VpJSType";
 
 ! TODO - do we need that? or can we use other ones declared later?
 Array returnedValue -> BUFLEN+4;
@@ -582,7 +584,7 @@ Array returnedValuebuffer buffer BUFLEN+4;
         fref_js_return = make_fref(JS_RETURN_FILE);
         str = open_file(fref_js_return, JS_RETURN_FILE, filemode_Read);
         ! what is returned here is an array, but we want a buffer array for the
-		! rest of the code
+        !      rest of the code
         len = glk($0092, str, returnedValue, BUFLEN); ! get_buffer_stream
         returnedValuebuffer-->0 = len;
         for (i=0: i<len: i++) {
@@ -595,84 +597,27 @@ Array returnedValuebuffer buffer BUFLEN+4;
 	}
 ];
 
-[ VorpleWhatType txt        len c d;
-    if (~~isVorpleSupported()) {
-		return "nothing";
-	}
-    ! Assume this is called on a buffer array (like the one returned by
-	! "VorpleWhatWasReturned()"). If not, try again after conversion
-    if (txt ofclass String) {
-        txt.print_to_array(returnedValuebuffer, BUFLEN);
-        return VorpleWhatType(returnedValuebuffer);
-    }
 
-    len = txt-->0;
-    if (compare_string(txt, len, "")) { return "nothing"; }
-    if (compare_string(txt, len, "undefined")) { return "nothing"; }
-    if (compare_string(txt, len, "null")) { return "nothing"; }
-    if (compare_string(txt, len, "true")) { return "truth state"; }
-    if (compare_string(txt, len, "false")) { return "truth state"; }
-    if (compare_string(txt, len, "NaN")) { return "NaN"; }
-    if (compare_string(txt, len, "Infinity")) { return "infinity"; }
-    if (compare_string(txt, len, "-Infinity")) { return "infinity"; }
-    c = txt->(WORDSIZE); ! 1st character
-    d = txt->(WORDSIZE+len-1); ! last character
-    switch(c) {
-        39: ! 39 = '
- 			if (len == 1 || d ~= 39) {
-				return "unknown";
-			} else {
-				return "text";
-			}
-        '[':
-			return "list";
-        '{':
-			return "object";
+! TODO - do we need that? or can we use other ones declared later?
+Array returnedValueType -> BUFLEN+4;
+Array returnedValueTypebuffer buffer BUFLEN+4;
+
+[ VorpleWhatTypeWasReturned     str len i;
+    if (isVorpleSupported()) {
+        fref_js_return_type = make_fref(JS_RETURN_TYPE_FILE);
+        str = open_file(fref_js_return_type, JS_RETURN_TYPE_FILE, filemode_Read);
+        ! what is returned here is an array, but we want a buffer array for the
+        !      rest of the code
+        len = glk($0092, str, returnedValueType, BUFLEN); ! get_buffer_stream
+        returnedValueTypebuffer-->0 = len;
+        for (i=0: i<len: i++) {
+			returnedValueTypebuffer->(WORDSIZE+i) = returnedValueType->i;
+		}
+        glk($0044, str, gg_result); ! stream_close
+        return returnedValueTypebuffer;
+    } else {
+        return "";
     }
-    ! this is so ugly!...
-    if ( txt->(WORDSIZE) == 'f'
-		&& txt->(WORDSIZE) == 'u'
-		&& txt->(WORDSIZE) == 'n'
-    	&& txt->(WORDSIZE) == 'c'
-		&& txt->(WORDSIZE) == 't'
-		&& txt->(WORDSIZE) == 'i'
-		&& txt->(WORDSIZE) == 'o'
-		&& txt->(WORDSIZE) == 'n'
-		&& txt->(WORDSIZE) == ' ') {
-    	return "function";
-    }
-    ! corresponding regexp : "^\-?\d+(\.\d+)?$"
-    c = 0; ! current number of letter
-    ! "^\-?"
-    if (txt->(WORDSIZE) == '-') {
-		c++;
-	}
-    ! "\d+"
-    if (txt->(WORDSIZE+c) > 58 || txt->(WORDSIZE+c) < 48) {
-		return "unknown";
-	}
-    while ( c < len && txt->(WORDSIZE+c) <= 58 && txt->(WORDSIZE+c) >= 48) {
- 		c++;
-	}
-    ! "()?$"
-    if (c == len) {
-		return "number";
-	}
-    ! "\.\d+"
-    if (txt->(WORDSIZE+c) ~= '.') {
-		return "unknown";
-	} else {
-		c++;
-	}
-    while ( c < len && txt->(WORDSIZE+c) <= 58 && txt->(WORDSIZE+c) >= 48) {
-		c++;
-	}
-    ! "$"
-    if (c == len) {
-		return "number";
-	} else {
-		return "unknown";
-	}
 ];
 
 [ VorpleWhatTextWasReturned     txt len i ;
@@ -680,7 +625,7 @@ Array returnedValuebuffer buffer BUFLEN+4;
 		return "";
 	}
     txt = VorpleWhatWasReturned();
-    if ( ~~compare_string(VorpleWhatType(txt), 4, "text")) {
+    if ( ~~compare_string(VorpleWhatTypeWasReturned(), 4, "text")) {
 		return txt;
 	}
     len = txt-->0;
@@ -713,45 +658,51 @@ Array returnedValuebuffer buffer BUFLEN+4;
         d = 0;
         if (c < 58 && c > 47) { d = c-48; }
         if (c == '.') {
-			! TODO floating points
-			! let first decimal be text character number N + 1 in T converted
-			! into a number:
-			!
-			!		if first decimal > 5:
-			!			increment result;
-			!		else if first decimal is 5:
-			!			if negated is false:
-			!				increment result;
-			!			otherwise unless T exactly matches the regular
-			!				expression "\-\d+\.50*":
-			!				increment result;
-			!		break;
+            ! floating point numbers are rounded into integers,
+            ! because Inform doesn't do floating points.
+            ! The rounding is to the closest integer, and
+            ! "-1.500000" is rounded to -1 (but "1.50000" is rounded to 2)
+            n++;
+            c = txt->(WORDSIZE+n); ! first decimal
+            if ( c >= 53) {        ! >= 5
+                if (neg==1 && c == 53) { ! -.5XXXXX
+                    ! Check: if -1.5, round to -1, if -1.51, round to 2
+                    n++;
+                    while (n<l) {
+                        if (txt->(WORDSIZE+n) ~= 48) { ! ==0
+                            jump notAll0s;
+                        }
+                        n++;
+                    }
+                    return -res;
+                }
+                .notAll0s;
+                res++;
+            }
+            if (neg==1) { return -res; } else { return res; }
         }
         res = res * 10 + d;
+        ! Check for overflow
         if (prev > res) {
-            VorpleThrowRuntimeError("Number ", txt, " exceeds Glulx range");
+            VorpleThrowRuntimeError(BuildCommand("Number ", txt, " exceeds Glulx range"));
             return 0;
         }
         prev = res;
     }
-    if (neg == 1) {
-		return 0-res;
-	} else {
-		return res;
-	}
+    if (neg == 1) { return -res; } else { return res; }
 ];
 
 [ VorpleWhatNumberWasReturned       txt;
     if (isVorpleSupported() == false) { return 0; }
     txt = VorpleWhatWasReturned();
-    if (compare_string(VorpleWhatType(txt), 4, "text")) {
+    if (compare_string(VorpleWhatTypeWasReturned(), 4, "text")) {
 		txt = VorpleWhatTextWasReturned();
 	}
     else {
-        if (~~compare_string(VorpleWhatType(txt), 6, "number")) {
+        if (~~compare_string(VorpleWhatTypeWasReturned(), 6, "number")) {
             VorpleThrowRuntimeError(
 				BuildCommand("Trying to convert return value of type ",
-				VorpleWhatType(txt), " into a number"));
+				VorpleWhatTypeWasReturned(), " into a number"));
             return 0;
         }
     }
@@ -763,7 +714,7 @@ Array returnedValuebuffer buffer BUFLEN+4;
 		return false;
 	}
     txt = VorpleWhatTextWasReturned();
-    type = VorpleWhatType(txt);
+    type = VorpleWhatTypeWasReturned();
     if (~~compare_string(type, 11, "truth state")) {
         VorpleThrowRuntimeError(
 			BuildCommand("Trying to convert return value of type ", type,
