@@ -27,7 +27,7 @@
 !		"VORPLE_NO_REPLACES" to prevent Vorple from replacing these routines
 !		-- you will have to manually add the Vorple modifications in this case.
 !
-!	Version:	3.1 (preview)
+!	Version:	3.1
 !	Released:	2018/09/23
 ! ==============================================================================
 
@@ -68,7 +68,6 @@ Object VorpleInterfaceSetup;
 ! The following 'bp_output_stream()' routine is directly taken from
 ! JustEnoughGlulx.h by Roger Firth. (We do not include the complete extension
 ! to avoid potential conflicts with Glulx entry points)
-! TODO - check license here
 Constant BP_MEMORYFREF_ROCK 661;
 Constant BP_MEMORY_MAXNEST 16;
 Constant BP_OUTSTREAM_SCREEN 1;
