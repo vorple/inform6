@@ -1,0 +1,115 @@
+! Petting Zoo - An icon in the status line to show the player character's mood
+
+! This example shows how to insert images to the status line. The status line reflects a change in a value - the player character's mood - by showing appropriate icons in the left column. In the mobile view the icons are shown in the middle of the status line.
+
+! Because the extension doesn't directly have features to insert images into the status line, we'll write a custom status line construction rule for it. The rule first removes old content from the status line, then puts the image in the left column and the location to the right column
+
+! The image files used in this example can be downloaded from vorple-if.com.
+
+Constant Story "Petting Zoo^";
+
+                          Include "vorple.h";
+Include "parser";
+Include "verblib";
+                          Include "vorple-status-line.h";
+                          Include "vorple-multimedia.h";    
+Include "grammar";
+
+
+
+Constant MOOD_CRYING = 1;
+Constant MOOD_SAD = 2;
+Constant MOOD_NEUTRAL = 3;
+Constant MOOD_SMILING = 4;
+Constant MOOD_HAPPY = 5;
+Global player_mood = 3;
+
+Array mood_pictures table 5;
+
+
+[ MoodText i ;
+    switch(i) {
+        MOOD_CRYING: return "crying";
+        MOOD_SAD: return "sad";
+        MOOD_NEUTRAL: return "neutral";
+        MOOD_SMILING: return "smiling";
+        MOOD_HAPPY: return "happy";
+    }
+];
+
+[ Initialise ;
+	location = pettingzoo;
+	VorpleInitialise();
+	VorpleConstructStatusLine(2);
+	VorpleStatusLineRightHand = MoodText(player_mood);
+	mood_pictures-->1 = "Face-crying.png";
+	mood_pictures-->2 = "Face-sad.png";
+	mood_pictures-->3 = "Face-neutral.png";
+	mood_pictures-->4 = "Face-smiling.png";
+	mood_pictures-->5 = "Face-happy.png";
+	VorplePreloadImages(mood_pictures);
+];
+
+
+
+Object MyStatusLineRule "" StatusLineRulebook,
+    with description [;
+        VorpleStatusLineClear();
+        VorpleSetOutputFocus("status-line-left");
+        VorpleImage(mood_pictures-->player_mood, MoodText(player_mood));
+        VorpleSetOutputFocus("status-line-right");
+        PrintStringOrArray(VorpleStatusLineLeftHand);
+        VorpleSetOutputFocus("status-line-mobile");
+        VorpleImage(mood_pictures-->player_mood, MoodText(player_mood));
+        VorpleSetOutputFocusMainWindow();
+    ];
+
+Object pettingzoo "Petting Zoo"
+    with description "There are many kinds of animals you can pet here.",
+has light;
+
+Attribute friendly;
+Attribute dangerous;
+
+Object bunny "bunny" pettingzoo
+    with name 'bunny',
+has friendly;
+Object puppy "puppy" pettingzoo
+    with name 'puppy',
+has friendly;
+Object sheep "sheep" pettingzoo
+    with name 'sheep',
+has friendly;
+Object crocodile "crocodile" pettingzoo
+    with name 'crocodile',
+has dangerous;
+Object warthog "warthog" pettingzoo
+    with name 'warthog',
+has dangerous;
+Object snake "snake" pettingzoo
+    with name 'snake',
+has dangerous;
+
+[ MakePlayerSadder ;
+    if (player_mood > 1) { player_mood--; }
+];
+
+[ MakePlayerHappier ;
+    if (player_mood < 5) { player_mood++; }
+];
+
+[ PetSub ;
+    if (noun has dangerous) {
+        print "You approach ", (the) noun, " and it almost bites your hand off!";
+        MakePlayerSadder();
+    }
+    if (noun has friendly) {
+        print "You pet ", (the) noun, " and feel better.";
+        MakePlayerHappier();
+    }
+];
+
+Verb 'pet'
+* animate       ->Pet;
+Extend 'touch' first
+* animate       ->Pet;
