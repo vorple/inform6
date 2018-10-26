@@ -71,7 +71,7 @@ Constant IMAGE_RIGHT_FLOATING = 5;
 [ VorplePreloadImages list     len i ;
 	! List must be a table, like page 43 of DM4
 	len = list-->0;
-	for (i=0: i<len: i++) { VorplePreloadImage(list-->i); }
+	for (i=1: i<=len: i++) { VorplePreloadImage(list-->i); }
 ];
 
 
