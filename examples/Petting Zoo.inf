@@ -44,6 +44,7 @@ Array mood_pictures table 5;
 	mood_pictures-->3 = "Face-neutral.png";
 	mood_pictures-->4 = "Face-smiling.png";
 	mood_pictures-->5 = "Face-happy.png";
+	print "^^^";
 	VorpleInitialise();
 	VorpleConstructStatusLine(2);
 ];
