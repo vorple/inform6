@@ -870,6 +870,10 @@ Array Vorple_prompt buffer (BUFLEN-1);
     if (act == ##Prompt) {
         ! This is also the moment we update the user interface
         VorpleUpdateTheInterface();
+        ! Let's include notifications fallback here too
+        #Ifdef VORPLE_NOTIFICATIONS;
+        VorpleNotificationsFallback();
+        #Endif;
         ! Now print the prompt in Vorple
         if (isVorpleSupported()) {
             bp_output_stream(3, Vorple_prompt, BUFLEN-1);
@@ -926,25 +930,6 @@ Array Vorple_prompt buffer (BUFLEN-1);
 	new_line;
     }
 	return true;
-];
-
-
-!===========================================
-! Hack to show notifications on the first turn
-
-! Vorple uses "LookRoutine()", in a hack to display notifications on the first
-! turn. If you defined your own, this will trigger an error, but just call
-! yours "MyLookRoutine()"
-#Stub MyLookRoutine 0;
-
-[ LookRoutine ;
-	! each_turn is executed at the end of every turn, so we need a way to
-	! execute it at the very beginning too cf Roger Firth's "Why don't my
-	! daemons run at the start of the game"
-	#Ifdef VORPLE_NOTIFICATIONS;
-	if (turns == 0) { VorpleNotificationsFallback(); }
-	#Endif;
-	MyLookRoutine();
 ];
 
 

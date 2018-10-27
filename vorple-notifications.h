@@ -77,9 +77,9 @@ Global Vorple_notifarraysinit=0;
     bp_output_stream(-3);
     bp_output_stream(3, notifs_array, LEN_NOTIFICATIONS_FALLBACK);
     PrintStringOrArray(notifs_copy);
-    print "^[";
+    print "[";
     PrintStringOrArray(str);
-    print "]";
+    print "]^";
     bp_output_stream(-3);
     if (notifs_array->0 >= LEN_NOTIFICATIONS_FALLBACK-1) {
         style bold;
@@ -89,11 +89,6 @@ Global Vorple_notifarraysinit=0;
     notifs++;
 ];
 
-
-Object vorple_notif
-	with found_in [; rtrue; ],
-	each_turn [; VorpleNotificationsFallback(); rtrue; ],
-has scenery concealed;
 
 [ VorpleNotificationsFallback  ;
 	if (isVorpleSupported() == 0 && notifs > 0) {
