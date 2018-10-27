@@ -45,7 +45,6 @@ System_file;
 ! as the description of the object. See the end of this file
 
 Replace Banner OldBanner;					! (verblibm.h)
-Replace DrawStatusLine OldDrawStatusLine;	! (parserm.h)
 Replace L__M OldLM;							! (verblibm.h)
 #Endif; ! VORPLE_NO_REPLACES;
 
@@ -226,11 +225,10 @@ Object VorpleInterfaceUpdate;
 	! window title
 	VorpleExecuteJavaScriptCommand(
 		BuildCommand("document.title='", VorpleEscape(Story), "'"));
-
 	! vorple interface setup rules
         VorpleSetupTheInterface();
         ! vorple interface construction rules
-        VorpleConstructTheInterface();
+        VorpleUpdateTheInterface();
 ];
 
 Global VorpleCommunicationDone = 0;
@@ -653,7 +651,7 @@ Array returnedValueTypebuffer buffer BUFLEN+4;
     len = txt-->0;
     ! remove first and last character
     for (i=1: i<len: i++) {
-        txt->(WORDSIZE+i) = txt->(WORDSIZE+i-1);
+        txt->(WORDSIZE+i-1) = txt->(WORDSIZE+i);
     }
     txt-->0 = len-2;
     return txt;
@@ -871,7 +869,7 @@ Array Vorple_prompt buffer (BUFLEN-1);
 	x1 = s; ! avoid compiler warning
     if (act == ##Prompt) {
         ! This is also the moment we update the user interface
-        VorpleConstructTheInterface();
+        VorpleUpdateTheInterface();
         ! Now print the prompt in Vorple
         if (isVorpleSupported()) {
             bp_output_stream(3, Vorple_prompt, BUFLEN-1);
@@ -924,8 +922,8 @@ Array Vorple_prompt buffer (BUFLEN-1);
     if (isVorpleSupported()) {
         VorpleExecuteJavaScriptCommand("return vorple.version");
         print "Vorple version ";
- 		PrintStringOrArray(VorpleWhatTextWasReturned());
-		new_line;
+        PrintStringOrArray(VorpleWhatTextWasReturned());
+	new_line;
     }
 	return true;
 ];
@@ -957,12 +955,6 @@ Array Vorple_prompt buffer (BUFLEN-1);
 [ Banner;
 	OldBanner();
 	VorpleAppendToBanner();
-	return true;
-];
-
-[ DrawStatusLine;
-	if (VorpleAppendToDrawStatusLine()) return true;
-	OldDrawStatusLine();
 	return true;
 ];
 

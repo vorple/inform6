@@ -12,8 +12,18 @@ Constant VORPLE_STATUS_LINE_FULL_WIDTH;
 ! Don't change this number directly - internal use only
 Global VorpleStatusLineSize = 0;
 
+
 !===============================
 ! Construct the Vorple status line with a given number of columns
+
+! Default is something on the left and something on the right
+! Change this if you want more or less
+Global VorpleStatusLineColumns = 2;
+
+Object VorpleStatusLineConstructionRule "" VorpleInterfaceSetup
+    with description [; 
+        VorpleConstructStatusLine(VorpleStatusLineColumns);
+    ];
 
 [ VorpleConstructStatusLine cols ;
     if (cols > 3 || cols < 0) {
@@ -55,10 +65,8 @@ Array VorpleStatusLineMobile buffer LEN_STATUS;
 ! Put this variable at 0 if you don't want those to be updated with the usual location/score text
 Constant VORPLE_USUAL_STATUS_LINE = 1;
 
-
 Object VorpleDrawStatusLine "" VorpleInterfaceUpdate
     with description [ r ;
-        VorpleConstructStatusLine();
         if (VORPLE_USUAL_STATUS_LINE == 1) {
             ! update the columns text using the usual DrawStatusLine
             VorpleStatusLineUsualInfo();
@@ -79,7 +87,7 @@ Object VorpleDefaultStatusLine
         if (VorpleStatusLineSize > 1) {
             VorplePutContentInAllElements("status-line-left", VorpleStatusLineLeftHand);
         }
-        if (VorpleStatusLineSize == 2) {
+        if (VorpleStatusLineSize ~= 2) {
             VorplePutContentInAllElements("status-line-middle", VorpleStatusLineMiddleHand);
         }
         if (VorpleStatusLineSize > 1) {
@@ -94,15 +102,17 @@ Object VorpleDefaultStatusLine
 [ VorpleStatusLineUsualInfo       width;
     width = ScreenWidth();
     bp_output_stream(3, VorpleStatusLineLeftHand, LEN_STATUS);
-    if (location == thedark) {
-        print (name) location;
-    } else {
-        FindVisibilityLevels();
-        if (visibility_ceiling == location)
-            print (name) location;
-        else
-            print (The) visibility_ceiling;
-    }
+    ! TODO: bug: out of bounds memory access??
+    !if (location == thedark) {
+    !    print (name) location;
+    !} else {
+    !    FindVisibilityLevels();
+    !    if (visibility_ceiling == location)
+    !        print (name) location;
+    !    else
+    !        print (The) visibility_ceiling;
+    !}
+    print (name) location;
     bp_output_stream(-3);
     
     bp_output_stream(3, VorpleStatusLineRightHand, LEN_STATUS);
@@ -123,7 +133,7 @@ Object VorpleDefaultStatusLine
             }
             #Endif;
         }
-        bp_output_stream(-3);
+    bp_output_stream(-3);
 ];
     
 !===============================

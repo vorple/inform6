@@ -39,18 +39,21 @@ Array mood_pictures table 5;
 
 [ Initialise ;
 	location = pettingzoo;
-	VorpleInitialise();
-	VorpleConstructStatusLine(2);
-	VorpleStatusLineRightHand = MoodText(player_mood);
 	mood_pictures-->1 = "Face-crying.png";
 	mood_pictures-->2 = "Face-sad.png";
 	mood_pictures-->3 = "Face-neutral.png";
 	mood_pictures-->4 = "Face-smiling.png";
 	mood_pictures-->5 = "Face-happy.png";
-	VorplePreloadImages(mood_pictures);
+	VorpleInitialise();
+	VorpleConstructStatusLine(2);
 ];
 
-
+! Trick to preload images once at the very beginning
+Object Preload "" StatusLineRulebook,
+    with description [; 
+	VorplePreloadImages(mood_pictures);
+	remove self;
+    ];
 
 Object MyStatusLineRule "" StatusLineRulebook,
     with description [;
@@ -73,22 +76,22 @@ Attribute dangerous;
 
 Object bunny "bunny" pettingzoo
     with name 'bunny',
-has friendly;
+has animate friendly;
 Object puppy "puppy" pettingzoo
     with name 'puppy',
-has friendly;
+has animate friendly;
 Object sheep "sheep" pettingzoo
     with name 'sheep',
-has friendly;
+has animate friendly;
 Object crocodile "crocodile" pettingzoo
     with name 'crocodile',
-has dangerous;
+has animate dangerous;
 Object warthog "warthog" pettingzoo
     with name 'warthog',
-has dangerous;
+has animate dangerous;
 Object snake "snake" pettingzoo
     with name 'snake',
-has dangerous;
+has animate dangerous;
 
 [ MakePlayerSadder ;
     if (player_mood > 1) { player_mood--; }
@@ -101,15 +104,16 @@ has dangerous;
 [ PetSub ;
     if (noun has dangerous) {
         print "You approach ", (the) noun, " and it almost bites your hand off!";
-        MakePlayerSadder();
+        MakePlayerSadder(); rtrue;
     }
     if (noun has friendly) {
         print "You pet ", (the) noun, " and feel better.";
-        MakePlayerHappier();
+        MakePlayerHappier(); rtrue;
     }
+    <<Touch noun>>;
 ];
 
 Verb 'pet'
-* animate       ->Pet;
+* noun       ->Pet;
 Extend 'touch' first
 * animate       ->Pet;
