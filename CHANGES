@@ -9,12 +9,21 @@ Release 3.1
 Vorple
 ------
 
+ - Added the Status Line extension.
  - BREAKING CHANGE: Evaluated JavaScript code must now explicitly return a
    value from the expression, otherwise no return value is available in
    Inform. (Any time you used the VorpleWhatXXWasReturned routines, you need
    to add 'return' in the JS command that was supposed to return your
    valeu.) Previously the value of the last expression was automatically
    returned. See the Vorple extension documentation for details.
+ - BREAKING CHANGE: For performance reasons the interpreter now writes the type
+   of the evaluated JavaScript expression to a file for Inform to pick up,
+   instead of having the Inform extension deduce the type from the value. This
+   means that, to get the type, you need to use VorpleWhatTypeWasReturned(),
+   and not VorpleWhatType(text).
+ - Added the Vorple interface update rulebook as a mechanism for state-based user
+   interface updating, specifically for keeping the UI in sync after undo and
+   restore.
  - Fixed the display bug for Unicode (non-ASCII) characters sent through
    JavaScript; for instance the tooltips can now have accented characters in
    them.
@@ -34,6 +43,8 @@ Vorple
  - Fixed a bug with prompt handling - now the code checks if the prompt
    has changed before updating the value, instead of overwriting at every
    turn.
+ - Added title of a notification to the fallback.
+ - The LookRoutine stub is not used anymore
 
 
 Element manipulation
