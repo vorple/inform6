@@ -44,8 +44,10 @@ System_file;
 ! To change the status line, add objects to "StatusLineRulebook" with your code
 ! as the description of the object. See the end of this file
 
-Replace Banner OldBanner;					! (verblibm.h)
-Replace L__M OldLM;							! (verblibm.h)
+Replace Banner OldBanner;                                       ! (verblibm.h)
+Replace L__M OldLM;                                             ! (verblibm.h)
+Replace YesOrNo OldYesNo;                                       ! (verblibm.h)
+Replace AfterGameOver OldAfterGameOver;                         ! (parserm.h)
 #Endif; ! VORPLE_NO_REPLACES;
 
 ! ------------------------------------------------------------------------------
@@ -944,6 +946,96 @@ Array Vorple_prompt buffer (BUFLEN-1);
 	OldLM(act, n, x1, s);
 	return true;
 ];
+
+! Matches the 6/11 (2004) version
+[ YesOrNo i j;
+    for (::) {
+        #Ifdef TARGET_ZCODE;
+        if (location == nothing || parent(player) == nothing) read buffer parse;
+        else read buffer parse DrawStatusLine;
+        j = parse->1;
+        #Ifnot; ! TARGET_GLULX;
+        KeyboardPrimitive(buffer, parse);
+        j = parse-->0;
+        #Endif; ! TARGET_
+        if (j) { ! at least one word entered
+            i = parse-->1;
+            if (i == YES1__WD or YES2__WD or YES3__WD) rtrue;
+            if (i == NO1__WD or NO2__WD or NO3__WD) rfalse;
+        }
+        L__M(##Quit, 1);
+        if (isVorpleSupported()==0) print "> ";
+    }
+];
+
+! Matches the 6/11 (2004) version
+[ AfterGameOver i;
+
+  .RRQPL;
+
+    L__M(##Miscellany,5);
+
+  .RRQL;
+
+    if (isVorpleSupported()==0) { print "> "; }
+    #Ifdef TARGET_ZCODE;
+    #IfV3; read buffer parse; #Endif; ! V3
+    temp_global=0;
+    #IfV5; read buffer parse DrawStatusLine; #Endif; ! V5
+    #Ifnot; ! TARGET_GLULX
+    KeyboardPrimitive(buffer, parse);
+    #Endif; ! TARGET_
+    i = parse-->1;
+    if (i == QUIT1__WD or QUIT2__WD) {
+        #Ifdef TARGET_ZCODE;
+        quit;
+        #Ifnot; ! TARGET_GLULX
+        quit;
+        #Endif; ! TARGET_
+    }
+    if (i == RESTART__WD) {
+        #Ifdef TARGET_ZCODE;
+        @restart;
+        #Ifnot; ! TARGET_GLULX
+        @restart;
+        #Endif; ! TARGET_
+    }
+    if (i == RESTORE__WD) {
+        RestoreSub();
+        jump RRQPL;
+    }
+    if (i == FULLSCORE1__WD or FULLSCORE2__WD && TASKS_PROVIDED==0) {
+        new_line; FullScoreSub();
+        jump RRQPL;
+    }
+    if (deadflag == 2 && i == AMUSING__WD && AMUSING_PROVIDED==0) {
+        new_line; Amusing();
+        jump RRQPL;
+    }
+    #IfV5;
+    if (i == UNDO1__WD or UNDO2__WD or UNDO3__WD) {
+        if (undo_flag == 0) {
+            L__M(##Miscellany, 6);
+            jump RRQPL;
+        }
+        if (undo_flag == 1) jump UndoFailed2;
+        #Ifdef TARGET_ZCODE;
+        @restore_undo i;
+        #Ifnot; ! TARGET_GLULX
+        @restoreundo i;
+        i = (~~i);
+        #Endif; ! TARGET_
+        if (i == 0) {
+          .UndoFailed2;
+            L__M(##Miscellany, 7);
+        }
+        jump RRQPL;
+    }
+    #Endif; ! V5
+    L__M(##Miscellany, 8);
+    jump RRQL;
+];
+
 #Endif; ! VORPLE_NO_REPLACES;
 
 #Endif; ! for the "Ifndef VORPLE_LIBRARY"
