@@ -170,9 +170,6 @@ Global fref_js_return_type;
 Object VorpleInterfaceSetup;
 
 [ VorpleSetupTheInterface    r ;
-	! TODO - is the test for vorple support superflous here, since
-	! "VorpleExecuteJavaScriptCommand()" just doesn't do anything for normal
-	! terps?
 	if (isVorpleSupported()) {
 	    VorpleExecuteJavaScriptCommand(
 			"return window._vorpleSetupRulebookHasRun||false");
@@ -191,7 +188,6 @@ Object VorpleInterfaceSetup;
 Object VorpleInterfaceUpdate;
 
 [ VorpleUpdateTheInterface      r ;
-        ! TODO: is the test necessary?
         if (isVorpleSupported()) {
             ! go through the rules of vorple interface construction
             objectloop (r in VorpleInterfaceUpdate) r.description();
