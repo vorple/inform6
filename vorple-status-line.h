@@ -4,7 +4,6 @@ System_file;
 Constant VORPLE_STATUS_LINE;
 
 Include "vorple.h";
-Include "vorple-screen-effects.h";
 Include "vorple-element-manipulation.h";
 
 ! Comment this out to not get a status line with full width
