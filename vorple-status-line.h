@@ -7,7 +7,7 @@ Include "vorple.h";
 Include "vorple-element-manipulation.h";
 
 ! Comment this out to not get a status line with full width
-Constant VORPLE_STATUS_LINE_FULL_WIDTH;
+!Constant VORPLE_STATUS_LINE_FULL_WIDTH;
 ! Don't change this number directly - internal use only
 Global VorpleStatusLineSize = 0;
 
@@ -112,6 +112,10 @@ Object VorpleDefaultStatusLine
     !        print (The) visibility_ceiling;
     !}
     print (name) location;
+    bp_output_stream(-3);
+    
+    bp_output_stream(3, VorpleStatusLineMobile, LEN_STATUS);
+    PrintStringOrArray(VorpleStatusLineLeftHand);
     bp_output_stream(-3);
     
     bp_output_stream(3, VorpleStatusLineRightHand, LEN_STATUS);
