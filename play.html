@@ -16,43 +16,42 @@
     <link rel="stylesheet" type="text/css" href="interpreter/vorple.css">
 </head>
 <body>
-    <main id="haven">
-        <div id="output">
-            <div id="window0" aria-live="polite" aria-atomic="false" aria-relevant="additions"></div>
-        </div>
+<main id="haven">
+    <div id="output">
+        <div id="window0" aria-live="polite" aria-atomic="false" aria-relevant="additions"></div>
+    </div>
 
-        <form id="lineinput">
-            <label id="lineinput-prefix" for="lineinput-field">#</label><input name="lineinput" id="lineinput-field" type="text" autocapitalize="none">
-        </form>
+    <form id="lineinput">
+        <label id="lineinput-prefix" for="lineinput-field">#</label><input name="lineinput" id="lineinput-field" type="text" autocapitalize="none">
+    </form>
 
-        <div id="loader">
-            <h2 id="loader-message">Loading scripts</h2>
-            <div id="spinner">V</div>
-        </div>
-    </main>
+    <div id="loader">
+        <h2 id="loader-message">Loading scripts</h2>
+        <div id="spinner">V</div>
+    </div>
+</main>
 
-    <script src="interpreter/vorple.min.js"></script>
+<script src="interpreter/vorple.min.js"></script>
 
-    <script>
-        vorple.options = {
-            autosave: false,
-            engineColors: false,
-	    resource_paths: {
-                images: 'resources/images',
-                audio: 'resources/audio'
-            },
+<script>
+    vorple.options = {
+        autosave: false,
+        engineColors: false,
+        resource_paths: {
+            images: "resources/images",
+            audio: "resources/audio"
+        },
 
-            // URL to the game file
-            story: "test.ulx"
-        };
+        // URL to the game file
+        story: "test.ulx"
+    };
 
-        Module.locateFile = function( name ) {
-            return "interpreter/" + name;
-        };
- 
-        vorple.debug.off();
-        vorple.init();
-    </script>
+    Module.locateFile = function( name ) {
+        return "interpreter/" + name;
+    };
+
+    vorple.debug.off();
+    vorple.init();
+</script>
 </body>
 </html>
-
