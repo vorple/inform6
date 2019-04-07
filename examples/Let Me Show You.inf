@@ -18,7 +18,7 @@ Include "grammar";
 ];
 
 Object occultStore "Occult Store"
-    with description "",
+    with description "(Type WALKTHROUGH for the game to solve itself.)",
 has light;
 
 Global correct_steps = 0;
