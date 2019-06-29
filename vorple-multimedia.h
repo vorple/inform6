@@ -84,7 +84,7 @@ Constant SOUND_LOOP = 1;
 
 [ VorplePlaySoundEffect file loop;
     bp_output_stream(3, hugehugestr, LEN_HUGEHUGESTR);
-    print "vorple.audio.playSound('";
+    print "vorple.audio.playSound(vorple.options.resource_paths.audio+'/";
     PrintStringOrArray(VorpleEscape(file));
     print "', {looping: ";
     if (loop == SOUND_LOOP) { print "true"; } else { print "false"; }
@@ -100,7 +100,7 @@ Constant MUSIC_FROM_START = 1;
 
 [ VorplePlayMusic file loop from_start;
     bp_output_stream(3, hugehugestr, LEN_HUGEHUGESTR);
-    print "vorple.audio.playMusic('";
+    print "vorple.audio.playMusic(vorple.options.resource_paths.audio+'/";
     PrintStringOrArray(VorpleEscape(file));
     print "', {looping: ";
     if (loop == MUSIC_LOOP) { print "true"; } else { print "false"; }
