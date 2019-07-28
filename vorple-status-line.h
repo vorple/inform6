@@ -146,7 +146,7 @@ Object VorpleDefaultStatusLine
 [ VorpleStatusLineRefresh ;
     if (isVorpleSupported() && VorpleStatusLineSize > 0) {
         ! save the internal state of line breaks
-        VorpleDrawStatusLine();
+        VorpleDrawStatusLine.description();
         ! restore the internal state of line breaks
     }
 ];
