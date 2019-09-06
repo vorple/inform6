@@ -2,6 +2,18 @@ See also the changelog of the main JavaScript library
 (https://github.com/vorple/vorple/CHANGES).
 
 
+Release 3.2
+===========================================
+
+Vorple
+------
+
+- Modified the Wikipedia script in The Sum of Human Knowledge example to make
+  use of Wikipedia's new extracts feature, which returns a clean summary of the
+  article (inform7 #14)
+
+
+
 Release 3.1
 ===========================================
 

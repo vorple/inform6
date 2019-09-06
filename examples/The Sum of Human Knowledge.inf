@@ -44,8 +44,6 @@ Array myTopic buffer 1000;
 	if (isVorpleSupported()){
 		VorplePlaceBlockLevelElement("dictionary-entry", "");
 		VorpleExecuteJavaScriptCommand( BuildCommand("return wikipedia_query('", VorpleEscape(myTopic), "')"));
-		! run paragraph on ?
-		VorpleBlockUserInterface();
 	} else {
 		print "You find the correct volume and learn about ";
 		print (PrintStringOrArray) myTopic;
