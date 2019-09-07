@@ -325,7 +325,7 @@ Array gg_result --> 2;
 	}
     mybuffer->3 = $E0;
     mybuffer->(4+len) = 0;
-    fref = glk($0061, 0, mybuffer+3, 0); ! fileref_create_by_name
+    fref = glk($0061, fileusage_TextMode, mybuffer+3, 0); ! fileref_create_by_name
     ! (This is a type-data, binary file.)
     if (~~fref) {
         print "Unable to create fileref: ", name, "^";
