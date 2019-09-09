@@ -11,6 +11,7 @@ Vorple
 - Modified the Wikipedia script in The Sum of Human Knowledge example to make
   use of Wikipedia's new extracts feature, which returns a clean summary of the
   article (inform7 #14)
+- Fixed Unicode escaping for JS strings (#22)
 
 
 

@@ -524,41 +524,66 @@ Constant NEW_LINE_CHAR = 10; ! '\n'
 	}
 ];
 
-[ VorpleEscapeLineBreaks str lb    i c;
-	!@output_stream 3 toescape;
-    bp_output_stream(3, toescape, 500);
-	print (PrintStringOrArray) str;
-	!@output_stream -3;
-    bp_output_stream(-3);
+Array uniarray --> (BUFLEN+1);
+Array strcloseresult --> 2;
+
+[ VorpleEscapeLineBreaks text lb    i c oldstr str;
+	for (i=0 : i<BUFLEN : i++)
+		uniarray-->i = 0;
+
+	oldstr = glk($0048); ! stream_get_current
+	str = glk($0139, uniarray, BUFLEN, 1, 0); ! stream_open_memory_uni
+	if (str == 0) {
+		VorpleThrowRuntimeError("Unable to open memory stream.");
+	}
+
+	glk($0047, str); ! stream_set_current
+	print (PrintStringOrArray) text;
+	glk($0047, oldstr); ! stream_set_current
+	glk($0044, str, strcloseresult); ! stream_close
+
+	if (strcloseresult-->0 ~= 0)
+		VorpleThrowRuntimeError("Memory stream records more than zero characters read");
+	! strcloseresult-->1 is now the length of the stream
+
 	!@output_stream 3 temp;
-    bp_output_stream(3, temp, 50);
+	bp_output_stream(3, temp, 50);
 	print (PrintStringOrArray) lb;
 	!@output_stream -3;
-    bp_output_stream(-3);
+	bp_output_stream(-3);
+
 	!@output_stream 3 safe;
-    bp_output_stream(3, safe, 500);
-	for (i=0: i<toescape-->0: i++) {
-		if ( toescape->(WORDSIZE+i) == 39 || toescape->(WORDSIZE+i) == 92
-			|| toescape->(WORDSIZE+i) == 34) {
-            ! single quote or \ or double quote
-			print (char) 92; ! \
-			print (char) toescape->(WORDSIZE+i);
-            continue;
+	bp_output_stream(3, safe, BUFLEN);
+
+	for (i=0: i<BUFLEN: i++) {
+		c = uniarray-->i;
+
+		if (c == 0) {
+			break;
 		}
-		if ( toescape->(WORDSIZE+i) == NEW_LINE_CHAR) { ! line break
+
+		if (c == 39 || c == 92 || c == 34) { ! single quote or \ or double quote
+			print (char) 92; ! \
+			print (char) c;
+			continue;
+		}
+
+		if (c == NEW_LINE_CHAR) { ! line break
 			print (PrintStringOrArray) temp;
 			continue;
 		}
-		c =  toescape->(WORDSIZE+i);
-        if (c < 128) {
-            print (char) c;
-        } else {
-            print (char) 92; print "u";  ! \u
-            Unicode(c);
-        }
+
+		if (c > 127) {
+			print (char) 92; print "u";  ! \u
+			Unicode(c);
+			continue;
+		} 
+
+		print (char) c;
 	}
+
 	!@output_stream -3;
-    bp_output_stream(-3);
+	bp_output_stream(-3);
 
 	return safe;
 ];
