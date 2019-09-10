@@ -21,7 +21,11 @@ Other functions are available:
 
 * Executing JavaScript commands:
   * `VorpleExecuteJavaScriptCommand(str)`: the javascript command `str` will be sent to the interpreter,
-which will execute it.
+which will execute it. The `str` has to be a Latin-1 string or a byte array.
+  * `VorpleEscape(str)`: escapes the argument by putting backslashes wherever needed and converting
+Unicode letters into their \uxxxx equivalent. The argument can be a byte array, a Latin-1 string, or
+even a Unicode string, but not a word array; if all you have is a word array, use `UnicodeToLatin1`
+for the conversion.
   * `VorpleWhatWasReturned()`: returns a buffer array containing what the last JS call returned.
   * `VorpleWhatType(array)`: use with the array returned by `VorpleWhatWasReturned()` to know what type
 the data that was returned is.
@@ -52,11 +56,20 @@ As well as utility functions:
 * `UniqueIdentifier()`: generates a 12-digit unique identifier; you can use that for the names of your
 HTML elements.
 * `IntToString(i)`: returns an array representing the integer i.
-* `PrintStringOrArray(txt)`: displays the given string or buffer array.
-* `BuildCommand(str1, ..., str7)`: usage of this function is discouraged! It is used internally to
-concatenate strings, in almost every call to the Vorple interface; if you use it several times in a
-row, you overwrite hugehugestr, and you lose information. If you need a function to concatenate things,
-declare an array that's not hugehugestr and adapt the code of this function.
+* `PrintStringOrArray(txt)`: displays the given string or buffer (byte) array.
+* `PrintStringOrWordArray(txt)`: displays the given string or word array.
+* `BuildCommand(str1, ..., str7)`: this function is used internally, in almost every call to the Vorple
+interface. It takes up to 7 Latin-1 strings or byte arrays and returns a byte array. It is perfectly
+safe for you to use this function in a call to `VorpleExecuteJavaScriptCommand`; if you use it in any
+other Vorple call, you run into the risk of nested calls to this function, which would overwrite
+hugehugestr and lose information. If you need a function to concatenate things, declare an array that's
+not hugehugestr and adapt the code of this function.
+* `ConcatenateUnicodeStrings(str1, ..., str7)`: this function takes up to 7 Unicode strings or word
+arrays and concatenates them; then sends back a byte array where all the unicode letters have been
+replaced by their \uxxxx equivalent, thus making the resulting array ready to be sent to a JS call,
+or a VorpleEscape call, or a BuildCommand call.
+* `UnicodeToLatin1(str)`: converts a Unicode string or a word array into a byte array where the
+Unicode letters have been escaped JS-style.
 
 Additionally, two "rulebooks" are used: VorpleInterfaceSetup, and StatusLineRulebook. If you declare an
 object as contained in either object, its description routine will be executed, respectively upon Vorple
