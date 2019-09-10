@@ -413,19 +413,37 @@ Array shortstr buffer LEN_SHORTSTR;
 Array hugestr buffer LEN_HUGESTR;
 Array hugehugestr buffer LEN_HUGEHUGESTR;
 
-! Print a string or an array (a buffer array, to be more precise)
+! Print a string or a byte array (a buffer array, to be more precise)
 [ PrintStringOrArray st i ;
 	if (st ofclass String) {
 		print (string) st;
-	}
-	else {
+	} else {
 		for (i=0: i< st-->0: i++) {
 			print (char) st->(WORDSIZE+i);
 		}
 	}
 ];
 
+! Print a string or a word array (for instance something that
+!   corresponds to a Unicode string).
+! In the case of a word array, since the length isn't stored
+!   in the array, you have to supply the length
+[ PrintStringOrWordArray st len i ;
+	if (st ofclass String) {
+		print (string) st;
+	} else {
+                if (len == 0) len = BUFLEN;     ! in case it wasnt specified
+		for (i=0: i<len: i++) {
+			print (char) st-->i;
+		}
+	}
+];
+
 ! Concatenates individual parts of a command, send a string back
+! The arguments must be byte arrays or strings with no unicode chars in them
+!   This is essentially because we send JS commands by writing in a file, and
+!   files in Inform / Glulx must be Latin-1.
+! If you want to concatenate Unicode strings, use the routine right after
 [ BuildCommand str1 str2 str3 str4 str5 str6 str7;
 	!@output_stream 3 hugehugestr;
     bp_output_stream(3, hugehugestr, LEN_HUGEHUGESTR);
@@ -442,8 +460,60 @@ Array hugehugestr buffer LEN_HUGEHUGESTR;
 		VorpleThrowRuntimeError("JS command too long; please increase
 			LEN_HUGEHUGESTR");
 	}
-	return hugehugestr ;
+    return hugehugestr ;
 ];
+
+! Concatenates Unicode strings and/or word arrays
+! The result is a byte array, so you can feed it to VorpleEscape with no problems
+!   (and in particular put it directly in a JS command)
+! So VorpleExecuteJavaScriptCommand(VorpleEscape(ConcatenateUnicodeStrings(...)))
+!    is valid
+Array largeuniarray --> (BUFLEN+1);
+Array strcloseresult --> 2;
+[ ConcatenateUnicodeStrings str1 str2 str3 str4 str5 str6 str7         i c oldstr str;
+	for (i=0 : i<BUFLEN : i++)
+		largeuniarray-->i = 0;
+	oldstr = glk($0048); ! stream_get_current
+	str = glk($0139, largeuniarray, BUFLEN, 1, 0); ! stream_open_memory_uni
+	if (str == 0) {
+		VorpleThrowRuntimeError("Unable to open memory stream.");
+	}
+	glk($0047, str); ! stream_set_current
+	if (str1 ~= 0) { print (PrintStringOrWordArray) str1; }
+	if (str2 ~= 0) { print (PrintStringOrWordArray) str2; }
+	if (str3 ~= 0) { print (PrintStringOrWordArray) str3; }
+	if (str4 ~= 0) { print (PrintStringOrWordArray) str4; }
+	if (str5 ~= 0) { print (PrintStringOrWordArray) str5; }
+	if (str6 ~= 0) { print (PrintStringOrWordArray) str6; }
+	if (str7 ~= 0) { print (PrintStringOrWordArray) str7; }
+	glk($0047, oldstr); ! stream_set_current
+	glk($0044, str, strcloseresult); ! stream_close
+	if (strcloseresult-->0 ~= 0)
+		VorpleThrowRuntimeError("Memory stream records more than zero characters read");
+	! strcloseresult-->1 is now the length of the stream
+	
+	! Transform into a byte array (so, de-Unicode here)
+	bp_output_stream(3, hugehugestr, LEN_HUGEHUGESTR);
+        for (i=0: i<LEN_HUGEHUGESTR: i++) {
+		c = largeuniarray-->i;
+		if (c == 0) {
+			break;
+		}
+		if (c > 127) {
+			print (char) 92; print "u";  ! \u
+			Unicode(c);
+			continue;
+		} 
+
+		print (char) c;
+	}
+	bp_output_stream(-3);
+	return hugehugestr;
+];
+[ UnicodeToLatin1 str ;
+    return ConcatenateUnicodeStrings(str);
+];
+
 
 ! int to string
 Constant Vorple_intarraylength = 10;
@@ -525,7 +595,6 @@ Constant NEW_LINE_CHAR = 10; ! '\n'
 ];
 
 Array uniarray --> (BUFLEN+1);
-Array strcloseresult --> 2;
 
 [ VorpleEscapeLineBreaks text lb    i c oldstr str;
 	for (i=0 : i<BUFLEN : i++)
@@ -562,7 +631,9 @@ Array strcloseresult --> 2;
 			break;
 		}
 
-		if (c == 39 || c == 92 || c == 34) { ! single quote or \ or double quote
+                ! single quote or double quote or \
+                !    but we don't want to escape a \u that comes from Unicode
+		if (c == 39 || c == 34 || (c == 92 && uniarray-->(i+1) ~= 'u') ) {
 			print (char) 92; ! \
 			print (char) c;
 			continue;
