@@ -71,9 +71,9 @@ or a VorpleEscape call, or a BuildCommand call.
 * `UnicodeToLatin1(str)`: converts a Unicode string or a word array into a byte array where the
 Unicode letters have been escaped JS-style.
 
-Additionally, two "rulebooks" are used: VorpleInterfaceSetup, and StatusLineRulebook. If you declare an
+Additionally, two "rulebooks" are used: VorpleInterfaceSetup, and VorpleInterfaceUpdate. If you declare an
 object as contained in either object, its description routine will be executed, respectively upon Vorple
-initialisation and when drawing the status line.
+initialisation and at every turn (when the prompt is written).
 
 Relevant examples: Convenience Store, Spy Games, Scrambled Eggs, The Sum of Human Knowledge (note that
 this one uses its own CSS sheet), and all the other ones.
@@ -223,3 +223,20 @@ argument to be specified in milliseconds; and `VorpleTooltipElementIndefinitely`
 `VorpleTooltipPromptIndefinitely`, for which the tooltip does not disappear.
 
 Relevant examples: Medical Dictionary, How to II, Ibid (2).
+
+### Vorple-status-line.h
+
+* `VorpleConstructStatusLine(c)`: function to call any time after `VorpleInitialise` to build the
+status line; the number of columns can be 1, 2 or 3.
+* `VorpleStatusLineUsualInfo`: the usual `DrawStatusLine` from the librairies, added there to be able
+to conveniently recreate the usual status line if needed.
+* `VorpleStatusLineRefresh`: refreshes the status line, should you need to do it more than once per
+turn
+* `VorpleStatusLineRemove`: removes the status line HTML object.
+* `VorpleStatusLineClear`: clears the status line, ready to be drawn again if needed.
+
+Additionally, one "rulebook" is declared in this extension: StatusLineRulebook. If you declare an
+object as contained in it, its description routine will be executed at every turn (during the
+interface update which takes place when the prompt is written).
+
+Relevant examples: Petting Zoo.
