@@ -45,27 +45,27 @@ body, input, label {
 }
 
 #output {
-    max-width: 751px;
-    padding: 0 15px 10px 15px;
     margin: 0 auto;
+    max-width: 751px;
+    overflow-wrap: break-word;
+    padding: 0 15px 10px 15px;
 }
 
 #output span {
     white-space: pre-wrap;
 }
 
+#lineinput {
+    display: flex;
+}
+
 #lineinput-field {
     border: 0;
     box-shadow: none;
-    display: inline;
+    display: block;
+    flex: 1;
     outline: 0;
-    padding: 0;
-    width: 100%;
-}
-
-#prompt {
-    display: inline-block;
-    width: 500px;
+    padding: 0 0 1px 0;
 }
 
 .hugowindow {

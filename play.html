@@ -17,14 +17,6 @@
 </head>
 <body>
 <main id="haven">
-    <div id="output">
-        <div id="window0" aria-live="polite" aria-atomic="false" aria-relevant="additions"></div>
-    </div>
-
-    <form id="lineinput">
-        <label id="lineinput-prefix" for="lineinput-field">#</label><input name="lineinput" id="lineinput-field" type="text" autocapitalize="none">
-    </form>
-
     <div id="loader">
         <h2 id="loader-message">Loading scripts</h2>
         <div id="spinner">V</div>
@@ -44,10 +36,6 @@
 
         // URL to the game file
         story: "test.ulx"
-    };
-
-    Module.locateFile = function( name ) {
-        return "interpreter/" + name;
     };
 
     vorple.debug.off();
