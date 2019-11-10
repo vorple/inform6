@@ -90,25 +90,25 @@ Global bp_memory_nest = 0;
             ; ! Code to be supplied
 
         bp_outstream_Script: ! ScriptOn
-            if (gg_scriptstr ~= GLK_NULL) rfalse;
-            if (gg_scriptfref == GLK_NULL) {
+            if (gg_scriptstr ~= 0) rfalse;
+            if (gg_scriptfref == 0) {
                 gg_scriptfref = glk_fileref_create_by_prompt(
 					fileusage_TextMode + fileusage_Transcript,
 					filemode_Write,
 					GG_SCRIPTFREF_ROCK);
-                if (gg_scriptfref == GLK_NULL) rfalse;
+                if (gg_scriptfref == 0) rfalse;
             }
             gg_scriptstr = glk_stream_open_file(
 				gg_scriptfref,
 				filemode_WriteAppend,
 				GG_SCRIPTSTR_ROCK);
-            if (gg_scriptstr == GLK_NULL) rfalse;
+            if (gg_scriptstr == 0) rfalse;
             glk_window_set_echo_stream(gg_mainwin, gg_scriptstr);
 
         -bp_outstream_Script:   ! ScriptOff
-            if (gg_scriptstr == GLK_NULL) rfalse;
-            glk_stream_close(gg_scriptstr, GLK_NULL);
-            gg_scriptstr = GLK_NULL;
+            if (gg_scriptstr == 0) rfalse;
+            glk_stream_close(gg_scriptstr, 0);
+            gg_scriptstr = 0;
 
         bp_outstream_Memory:
             if (bp_memory_nest == BP_MEMORY_MAXNEST) rfalse;
@@ -128,29 +128,29 @@ Global bp_memory_nest = 0;
             glk_stream_set_current(bp_memory_str-->bp_memory_nest);
             (bp_memory_buf-->bp_memory_nest)-->0 = gg_arguments-->1;
             bp_memory_buf-->bp_memory_nest = bp_memory_str-->bp_memory_nest
-				= GLK_NULL;
+				= 0;
 
         bp_outstream_Cmdfile: ! CommandsOn
-            if (gg_commandstr ~= GLK_NULL) rfalse;
+            if (gg_commandstr ~= 0) rfalse;
             fref = glk_fileref_create_by_prompt(
 				fileusage_TextMode + fileusage_InputRecord,
 				filemode_Write,
 				GG_COMMANDWSTR_ROCK);
-            if (fref == GLK_NULL) rfalse;
+            if (fref == 0) rfalse;
             gg_commandstr = glk_stream_open_file(
 				fref,
 				filemode_Write,
 				GG_COMMANDWSTR_ROCK);
             glk_fileref_destroy(fref);
             gg_command_reading = false;
-            if (gg_commandstr == GLK_NULL) rfalse;
+            if (gg_commandstr == 0) rfalse;
 
         -bp_outstream_Cmdfile: ! CommandsOff
-            if (gg_commandstr == GLK_NULL) rfalse;
+            if (gg_commandstr == 0) rfalse;
             if (gg_command_reading) rfalse;
             gg_command_reading = false;
-            glk_stream_close(gg_commandstr, GLK_NULL);
-            gg_commandstr = GLK_NULL;
+            glk_stream_close(gg_commandstr, 0);
+            gg_commandstr = 0;
     }
 	#Endif; ! TARGET_
     rtrue;
