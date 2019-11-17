@@ -2,6 +2,16 @@ See also the changelog of the main JavaScript library
 (https://github.com/vorple/vorple/CHANGES).
 
 
+Release 3.2.1
+===========================================
+
+- Removed references to the GLK_NULL constant which makes the library directly
+  compatible with the latest version of the Inform standard library (6.12.3)
+- Fixed issues with Unicode input and other Glulx-level methods that caused
+  crashes mainly with the Russian Inform library (#26)
+
+
+
 Release 3.2
 ===========================================
 
