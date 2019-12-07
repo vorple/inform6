@@ -19,9 +19,9 @@ Include "vorple.h";
             VorplePlaceDivElement(BuildCommand(id, " vorple-image ", classes), "");
             ! two vorple escapes -> can't use buildcommand (TODO: fix this?)
             bp_output_stream(3, hugehugestr, LEN_HUGEHUGESTR);
-            print "$('<img>', {src: vorple.options.resource_paths.images+'/";
+            print "$('<img>', {src: vorple.file.resourceUrl(vorple.options.resource_paths.images+'";
             PrintStringOrArray(VorpleEscape(file));
-            print "', alt: '";
+            print "'), alt: '";
             PrintStringOrArray(VorpleEscape(desc));
             print "'}).appendTo('.";
             PrintStringOrArray(id);
@@ -65,7 +65,7 @@ Constant IMAGE_RIGHT_FLOATING = 5;
 ];
 
 [ VorplePreloadImage file ;
-	VorpleExecuteJavaScriptCommand(BuildCommand("new Image().src=vorple.options.resource_paths.images+'/", VorpleEscape(file), "';"));
+	VorpleExecuteJavaScriptCommand(BuildCommand("new Image().src=vorple.file.resourceUrl(vorple.options.resource_paths.images+'", VorpleEscape(file), "');"));
 ];
 
 [ VorplePreloadImages list     len i ;
@@ -84,7 +84,7 @@ Constant SOUND_LOOP = 1;
 
 [ VorplePlaySoundEffect file loop;
     bp_output_stream(3, hugehugestr, LEN_HUGEHUGESTR);
-    print "vorple.audio.playSound(vorple.options.resource_paths.audio+'/";
+    print "vorple.audio.playSound(vorple.options.resource_paths.audio+'";
     PrintStringOrArray(VorpleEscape(file));
     print "', {looping: ";
     if (loop == SOUND_LOOP) { print "true"; } else { print "false"; }
@@ -100,7 +100,7 @@ Constant MUSIC_FROM_START = 1;
 
 [ VorplePlayMusic file loop from_start;
     bp_output_stream(3, hugehugestr, LEN_HUGEHUGESTR);
-    print "vorple.audio.playMusic(vorple.options.resource_paths.audio+'/";
+    print "vorple.audio.playMusic(vorple.options.resource_paths.audio+'";
     PrintStringOrArray(VorpleEscape(file));
     print "', {looping: ";
     if (loop == MUSIC_LOOP) { print "true"; } else { print "false"; }
@@ -173,7 +173,7 @@ Constant PLAYLIST_FROM_START = 1;
 ];
 
 [ VorpleIsAudioFilePlaying file ;
-    VorpleExecuteJavaScriptCommand(BuildCommand("return vorple.audio.isElementPlaying('.vorple-audio[src=@@92''+vorple.options.resource_paths.audio+'/", VorpleEscape(file), "@@92']')"));
+    VorpleExecuteJavaScriptCommand(BuildCommand("return vorple.audio.isElementPlaying('.vorple-audio[src=@@92''+vorple.options.resource_paths.audio+'", VorpleEscape(file), "@@92']')"));
     return VorpleWhatBooleanWasReturned();
 ];
 

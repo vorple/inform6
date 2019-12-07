@@ -2,6 +2,17 @@ See also the changelog of the main JavaScript library
 (https://github.com/vorple/vorple/CHANGES).
 
 
+Release 3.2.2
+===========================================
+
+- BREAKING CHANGE: resource_paths option in the main HTML file now needs a
+  leading slash (/) at the end of the paths (e.g. "image/" instead of "image".)
+  The HTML file that's included with Vorple has been updated but anyone
+  upgrading an existing project must replace or edit their HTML file.
+- Added compatibility with the new Borogove online editor
+
+
+
 Release 3.2.1
 ===========================================
 
