@@ -2,8 +2,19 @@ See also the changelog of the main JavaScript library
 (https://github.com/vorple/vorple/CHANGES).
 
 
-Release 3.2.2
+Release 3.2.4 (2021-02-14)
+Release 3.2.3 (2020-09-03)
 ===========================================
+
+No changes to the Inform 6 libraries.
+
+
+
+Release 3.2.2 (2019-11-19)
+===========================================
+
+Multimedia
+----------
 
 - BREAKING CHANGE: resource_paths option in the main HTML file now needs a
   leading slash (/) at the end of the paths (e.g. "image/" instead of "image".)
@@ -13,7 +24,7 @@ Release 3.2.2
 
 
 
-Release 3.2.1
+Release 3.2.1 (2019-11-17)
 ===========================================
 
 - Removed references to the GLK_NULL constant which makes the library directly
@@ -23,7 +34,7 @@ Release 3.2.1
 
 
 
-Release 3.2
+Release 3.2.0 (2019-09-14)
 ===========================================
 
 Vorple
@@ -38,7 +49,6 @@ Vorple
 
 Release 3.1
 ===========================================
-
 
 Vorple
 ------

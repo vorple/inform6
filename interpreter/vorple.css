@@ -33,7 +33,6 @@ blockquote {
 
 /* Hide default Inform 7 template elements */
 
-body.play > div.container,
 body.play > div.interpretercredit {
     display: none;
 }
@@ -271,10 +270,6 @@ body.play > div.interpretercredit {
     white-space: pre-wrap;
     max-width: inherit;
     width: calc(100% + 30px);
-}
-
-#output > .status-line-container {
-    margin-left: -15px;
 }
 
 .status-line-left {
