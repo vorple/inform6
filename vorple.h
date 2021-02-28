@@ -891,7 +891,7 @@ Array returnedValueTypebuffer buffer BUFLEN+4;
 ];
 
 [ VorplePlaceElementAtTopLevel classes ;
-    VorpleExecuteJavaScriptCommand("vorple.layout.focus('main#haven')");
+    VorpleExecuteJavaScriptCommand("vorple.layout.focus('main#vorple')");
     VorplePlaceBlockLevelElement(classes);
 ];
 

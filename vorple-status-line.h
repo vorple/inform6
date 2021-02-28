@@ -33,7 +33,7 @@ Object VorpleStatusLineConstructionRule "" VorpleInterfaceSetup
     VorpleStatusLineRemove();
     VorplePlaceElementAtTopLevel("status-line-container");
     #IfDef VORPLE_STATUS_LINE_FULL_WIDTH;
-    VorpleExecuteJavaScriptCommand("$('.status-line-container').prependTo('main#haven')");
+    VorpleExecuteJavaScriptCommand("$('.status-line-container').prependTo('main#vorple')");
     #Ifnot;
     VorpleExecuteJavaScriptCommand("$('.status-line-container').prependTo('#output')");
     #Endif;
