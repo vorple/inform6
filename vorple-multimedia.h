@@ -136,7 +136,7 @@ Constant PLAYLIST_FROM_START = 1;
     print "[";
     len = playlist-->0;
     for (i=0: i<len: i++) {
-        print "'"; print (string) VorpleEscape(playlist-->i); print "',";
+        print "vorple.options.resource_paths.audio+'", (PrintStringOrArray) VorpleEscape((playlist-->(i+1))), "',";
     }
     print "'']";
     
