@@ -115,10 +115,10 @@ Constant MUSIC_FROM_START = 1;
     VorpleExecuteJavaScriptCommand("vorple.audio.stopMusic()");
 ];
 [ VorpleStopSoundEffects ;
-    VorpleExecuteJavaScriptCommand("$('.vorple-sound').remove()");
+    VorpleExecuteJavaScriptCommand("$('.vorple-sound-effect').remove()");
 ];
 [ VorpleStopAudio ;
-    VorpleExecuteJavaScriptCommand("$('.vorple-sound').remove();vorple.audio.stopMusic()");
+    VorpleExecuteJavaScriptCommand("$('.vorple-sound-effect').remove();vorple.audio.stopMusic()");
 ];
 
 Constant PLAYLIST_LOOP = 1;
