@@ -115,10 +115,10 @@ Constant MUSIC_FROM_START = 1;
     VorpleExecuteJavaScriptCommand("vorple.audio.stopMusic()");
 ];
 [ VorpleStopSoundEffects ;
-    VorpleExecuteJavaScriptCommand("$('.vorple-sound').remove()");
+    VorpleExecuteJavaScriptCommand("$('.vorple-sound-effect').remove()");
 ];
 [ VorpleStopAudio ;
-    VorpleExecuteJavaScriptCommand("$('.vorple-sound').remove();vorple.audio.stopMusic()");
+    VorpleExecuteJavaScriptCommand("$('.vorple-sound-effect').remove();vorple.audio.stopMusic()");
 ];
 
 Constant PLAYLIST_LOOP = 1;
@@ -136,7 +136,7 @@ Constant PLAYLIST_FROM_START = 1;
     print "[";
     len = playlist-->0;
     for (i=0: i<len: i++) {
-        print "'"; print (string) VorpleEscape(playlist-->i); print "',";
+        print "vorple.options.resource_paths.audio+'", (PrintStringOrArray) VorpleEscape((playlist-->(i+1))), "',";
     }
     print "'']";
     
