@@ -64,9 +64,9 @@ Global TOOLTIP_DURATION = 7;
             ! because there are two IntToString working on the same array, we have to do it by hand
             !@output_stream 3 hugehugestr;
             bp_output_stream(3, hugehugestr, LEN_HUGEHUGESTR);
-            print "clearTimeout(_v_tooltip_timer);_v_tooltip_timer=setTimeout(function() {var $t=$('.";
+            print "clearTimeout(_v_tooltip_timer);_v_tooltip_timer=setTimeout(function() {const $t=$('.";
             PrintStringOrArray(classes);
-            print "').last();$.powerTip.hide();$t.attr('title','";
+            print "').last();if($t.length===0) return;$.powerTip.hide();$t.attr('title','";
             PrintStringOrArray(VorpleEscape(tip));
             print "').powerTip({manual:true,smartPlacement:true});$.powerTip.show($t);_v_tooltip_timer=setTimeout(function() {$.powerTip.hide($t,true);$t.removeAttr('title')},";
             PrintStringOrArray(IntToString(duration_milli));
@@ -101,7 +101,7 @@ Global TOOLTIP_DURATION = 7;
             ! because there are two IntToString working on the same array, we have to do it by hand
             !@output_stream 3 hugehugestr;
             bp_output_stream(3, hugehugestr, LEN_HUGEHUGESTR);
-            print "clearTimeout(_v_tooltip_timer);_v_tooltip_timer=setTimeout(function() {var $t=$('#lineinput-prefix');$.powerTip.hide();$t.data('powertip','";
+            print "clearTimeout(_v_tooltip_timer);_v_tooltip_timer=setTimeout(function() {const $t=$('#lineinput-prefix');if($t.length===0) return;$.powerTip.hide();$t.data('powertip','";
             PrintStringOrArray(VorpleEscape(tip));
             print "');$.powerTip.show($t); _v_tooltip_timer=setTimeout(function() {$.powerTip.hide($t,true);$t.removeAttr('title')},";
             PrintStringOrArray(IntToString(duration_milli));
